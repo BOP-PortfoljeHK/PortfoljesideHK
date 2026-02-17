@@ -6,7 +6,8 @@ import { contact } from './contact'
 import { oyaglass } from './oyaglass'
 import { jewelrycollection } from './jewelrycollection'
 import { appliedArts } from './appliedArts'
+import { sculptural } from './sculptural'
 
 
-export const schemaTypes = [ jewelrycollection, appliedArts, oyaglass, about, contact, ]
+export const schemaTypes = [ jewelrycollection, appliedArts, sculptural, oyaglass, about, contact, ]
 
