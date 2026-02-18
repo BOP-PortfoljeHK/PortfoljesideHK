@@ -1,0 +1,48 @@
+---
+import groq from "groq";
+import { sanity } from "../lib/sanityClient.ts";
+import { buildPathSegments, type RouteDoc } from "../lib/routes.ts";
+import { toHTML } from "@portabletext/to-html";
+
+export const prerender = true;
+
+export const getStaticPaths = async () => {
+  const pages: RouteDoc[] = await sanity.fetch(groq`
+    *[_type == "page" && defined(slug.current)]{
+      _id,
+      title,
+      "slug": slug.current,
+      "parentId": parent._ref
+    }
+  `);
+
+  const byId = new Map(pages.map((p) => [p._id, p]));
+
+  return pages.map((p) => ({
+    // ✅ send string, ikke array
+    params: { slug: buildPathSegments(p, byId).join("/") },
+    props: { id: p._id },
+  }));
+};
+
+const { id } = Astro.props as { id: string };
+
+const page = await sanity.fetch(
+  groq`*[_type == "page" && _id == $id][0]{ title, content }`,
+  { id }
+);
+
+const html = page?.content ? toHTML(page.content) : "";
+
+if (!page) Astro.response.status = 404;
+---
+
+{page ? (
+  <>
+   <h1>{page.title}</h1>
+<div set:html={html} />
+
+  </>
+) : (
+  <h1>Not found</h1>
+)}
