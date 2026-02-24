@@ -3,6 +3,7 @@ import groq from "groq";
 import { sanity } from "../lib/sanityClient.ts";
 import { buildPathSegments, type RouteDoc } from "../lib/routes.ts";
 import { toHTML } from "@portabletext/to-html";
+import { urlFor } from "../lib/sanityClient.ts";
 
 export const prerender = true;
 
@@ -32,7 +33,19 @@ const page = await sanity.fetch(
   { id }
 );
 
-const html = page?.content ? toHTML(page.content) : "";
+const html = page?.content 
+  ? toHTML(page.content, {
+    components: {
+      types: {
+        image: ({ value }: any) => {
+          const src = urlFor(value).width(1200).auto("format").url();
+          const alt = value?.alt ?? "";
+          return `<img src="${src}" alt="${alt}" loading="lazy" />`;
+        },
+      },
+    },
+  })
+ : "";  
 
 if (!page) Astro.response.status = 404;
 ---
