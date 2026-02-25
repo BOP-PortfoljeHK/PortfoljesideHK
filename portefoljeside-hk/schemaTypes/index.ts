@@ -8,7 +8,8 @@ import { oyaglass } from './oyaglass'
 import { jewelrycollection } from './jewelrycollection'
 import { appliedArts } from './appliedArts'
 import { sculptural } from './sculptural'
+import { frontpage } from './frontpage'
 
 
-export const schemaTypes = [ page, jewelrycollection, appliedArts, sculptural, oyaglass, about, contact, ]
+export const schemaTypes = [ page, jewelrycollection, appliedArts, sculptural, oyaglass, about, contact, frontpage ]
 

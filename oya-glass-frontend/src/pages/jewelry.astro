@@ -1,0 +1,54 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { sanity } from "../lib/sanityClient";
+import groq from "groq";
+import { urlFor } from "../lib/sanityClient";
+
+const slug = "jewelry";
+
+const page = await sanity.fetch(
+    groq`*[_type == "jewelrycollection" && slug.current == $slug][0]{
+        title,
+        description,
+        "imageUrl": image.asset->url,
+        "galleryUrls": gallery[].asset->url
+    }`,
+    {slug}
+);
+---
+
+<Layout title={page?.title ?? "Jewelry"}>
+    <div class="px-10 py-10">
+        <h1 class="text-4xl font-semibold">
+            {page?.title ?? "Jewelry Collection"}
+        </h1>
+
+        {page?.imageUrl && (
+            <img
+                class="mt-6 w-full max-w-3xl rounded"
+                src={page.imageUrl}
+                alt={page?.title ?? "Jewelry"}
+                loading="lazy"
+            />
+        )}
+
+        {page?.description ? (
+            <p class="prose mt-6 max-w-none">
+                {page.description}
+            </p>
+        ) : (
+            <p class="mt-6 opacity-70">
+                Fant ingen side i Sanity med slug "{slug}". Sjekk at dokumentet finnes og er publisert.
+            </p>
+        )}
+
+        {/* Gallery */}
+        {page?.galleryUrls?.length ? (
+            <div class="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
+                {page.galleryUrls.map((url: string) => (
+                    <img class="w-full rounded" src={url} alt="" />
+                ))}
+            </div>
+        ) : null}
+    </div>
+</Layout>

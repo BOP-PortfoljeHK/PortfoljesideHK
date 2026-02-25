@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+:root {
+    --bg: #f3efe9;      /* Lys gråbrun */
+    --surface: #ffffff; /* hvit */
+    --text: #1a1a1a;    /* mørk tekst */
+    --border: #e2ddd6;  /* varm lys kant */ 
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+}

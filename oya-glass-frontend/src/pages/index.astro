@@ -1,15 +1,57 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { sanity } from '../lib/sanityClient';
+import groq from 'groq';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+
+const frontpage = await sanity.fetch(
+  groq`*[_type == "frontpage"][0]{
+    heroHeading,
+    heroSubheading,
+    heroImage,
+    "heroImageUrl": heroImage.asset->url
+  }`
+);
+
 ---
 
-<Layout title="Hjem">
-  <div class="h-[200vh] px-10 py-10">
-    <h1 class="text-3xl">Scroll test</h1>
-    <p class="mt-4">Scroll ned og sjekk om headeren henger fast.</p>
-  </div>
-</Layout>
+
+<Layout title="Home">
+
+    {frontpage?.heroImageUrl && (
+      <section class="relative h-[80vh] w-full overflow-hidden bg-[#F4F2EE]">
+
+        <img
+          src={frontpage.heroImageUrl}
+          alt=""
+          class="absolute inset-0 h-full w-full object-cover blur-xl scale-110"
+        />  
+
+        <img
+          src={frontpage.heroImageUrl}
+          alt="Hero image"
+          class="absolute inset-0 h-full w-full object-contain"
+        />
+
+        <div class="absolute inset-0 bg-black/30"></div> 
+
+        <div class="relative z-10 flex h-full flex-col items-center justify-center text-white text-center px-6">
+          {frontpage?.heroHeading && (
+            <h1 class="text-5xl font-semibold mb-4">
+              {frontpage.heroHeading}
+            </h1>
+          )}
+
+          {frontpage?.heroSubheading && (
+            <p class="text-xl max-w-2xl">
+              {frontpage.heroSubheading}
+            </p>
+          )}
+        </div>
+        
+      </section>
+    )}
+
+</Layout> 
 
 

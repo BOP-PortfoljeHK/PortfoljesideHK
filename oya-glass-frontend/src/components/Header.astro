@@ -1,16 +1,66 @@
-<header class="sticky top-0 z-50 bg-white">
+---
+import { sanity } from "../lib/sanityClient";
+import groq from "groq";
+
+const pages = await sanity.fetch(groq`
+    *[_type == "page" && defined(slug.current)]{
+    title,
+    "slug": slug.current
+    }
+    `);
+---
+
+<header class="sticky top-0 z-50 bg-[var(--bg)]/95 backdrop-blur border-b border-[var(--border)]">
     <div class="flex items-center justify-between px-10 py-6">
 
-        <a href="/" class="text-2xl font-semibold tracking-wide">
+        <a href="/" class="text-2xl font-semibold tracking-wide text-[var(--text)]">
             Øya glass studio
         </a>
 
 
-        <nav class="flex gap-8 text-lg">
-            <a href="smykkekolleksjon" class="hover:opacity-60 transition">Smykkekolleksjon</a>
-            <a href="anvendtKunst" class="hover:opacity-60 transition">Anvendt kunst</a>
-            <a href="skulpturer" class="hover:opacity-60 transition">Skulpturer</a>
-            <a href="kontaktinfo" class="hover:opacity-60 transition">Kontakt</a> 
+        <nav class="flex gap-8 text-lg text-[var(--text)]/80">
+            
+            <a href="/jewelry" 
+                class:list={[
+                    "transition hover:text-[var(--text)]",
+                    Astro.url.pathname == "/jewelry" ? "underline underline-offset-8" : ""]}>
+                    Jewelry Collection
+            </a>
+
+            <a href="/applied-arts"
+                class:list={[
+                "transition hover:text-[var(--text)]",
+                Astro.url.pathname == "/applied-arts" ? "underline underline-offset-8" : ""]}>
+                Applied Arts
+            </a>
+
+            <a href="/sculptural"
+                class:list={[
+                "transition hover:text-[var(--text)]",
+                Astro.url.pathname == "/sculptural" ? "underline underline-offset-8" : ""]}>
+                Sculpturals
+            </a>
+
+            <a href="/oya-glass-studio"
+                class:list={[
+                "transition hover:text-[var(--text)]",
+                Astro.url.pathname == "/oya-glass-studio" ? "underline underline-offset-8" : ""]}>
+                Øya glass studio
+            </a>
+
+            <a href="/about"
+                class:list={[
+                "transition hover:text-[var(--text)]",
+                Astro.url.pathname == "/about" ? "underline underline-offset-8" : ""]}>
+                About
+            </a>
+            
+            <a href="/contact"
+                class:list={[
+                "transition hover:text-[var(--text)]",
+                Astro.url.pathname == "/contact" ? "underline underline-offset-8" : ""]}>
+                Contact
+            </a>
         </nav>
         
     </div>  
