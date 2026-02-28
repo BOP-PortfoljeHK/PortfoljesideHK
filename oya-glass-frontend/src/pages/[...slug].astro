@@ -3,6 +3,7 @@ import groq from "groq";
 import { sanity } from "../lib/sanityClient";
 import { fetchRoutes, buildPathSegments, type RouteDoc } from "../lib/routes";
 import { toHTML } from "@portabletext/to-html";
+import { urlFor } from "../lib/sanityClient.ts";
 import { urlFor, buildSrcset } from "../lib/sanityImage";
 
 // Fil for å håndtere alle sider som ikke har en spesifikk .astro-fil, og i stedet baseres på innholdet i Sanity. Dette gjør at vi kan lage nye sider i Sanity uten å måtte endre frontend-koden, så lenge de følger strukturen vi har satt opp. Koden er skapt ved hjelp av AI (ChatGPT).
