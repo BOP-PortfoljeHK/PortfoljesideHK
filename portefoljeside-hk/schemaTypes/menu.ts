@@ -1,5 +1,8 @@
 import { defineType, defineField } from "sanity";
 
+// denne filen brukes for å vise hovedstrukturen i menyen, og for å kunne redigere den i Sanity Studio. 
+// Den refererer til "page" dokumenter, som er de individuelle sidene på nettstedet. Ved å dra og slippe sidene i "items" arrayet
+
 export const menu = defineType({
   name: "menu",
   title: "Meny",

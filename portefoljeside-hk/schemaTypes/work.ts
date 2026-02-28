@@ -1,5 +1,10 @@
 import { defineType, defineField } from "sanity";
 
+// Denne filen definerer "work" dokumenttypen i Sanity. Hver "work" representerer et enkelt verk/prosjekt,
+// og kan ha en tittel, slug, kategori (referanse til "page"), hovedbilde, galleri og beskrivelse. 
+// "Work" dokumentene brukes for å vise verk automatisk på kategorisidene basert på hvilken kategori (Page) de tilhører. 
+// Denne delen vises kun i redigeringsgrensesnittet.
+
 export const work = defineType({
   name: "work",
   title: "Work",

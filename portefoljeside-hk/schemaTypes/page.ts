@@ -1,5 +1,8 @@
 import { defineType, defineField } from "sanity";
 
+// Denne filen definerer "page" dokumenttypen i Sanity. Hver "page" representerer en side på nettstedet, og kan ha en tittel,
+//  slug, foreldreside (for å lage hierarki), og innhold. "Page" dokumentene brukes i "menu" dokumentet for å bygge opp menystrukturen på nettstedet.
+
 export const page = defineType({
   name: "page",
   title: "Page",
