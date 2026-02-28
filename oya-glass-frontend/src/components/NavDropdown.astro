@@ -1,0 +1,58 @@
+---
+import groq from "groq";
+import { sanity } from "../lib/sanityClient";
+
+const MENU = groq`*[_type=="menu"][0]{ items[]->{ _id, title, "slug": slug.current } }`;
+const TOP = await sanity.fetch(MENU);
+const topItems = TOP?.items ?? [];
+
+// hent alle pages som er i menyen eller barn av dem
+const CHILDREN = groq`*[_type=="page" && defined(slug.current)]{
+  _id, title, "slug": slug.current, "parentId": parent._ref
+}`;
+const allPages = await sanity.fetch(CHILDREN);
+
+// lag lookup for barn per parentId
+const childrenByParent = new Map<string, any[]>();
+for (const p of allPages) {
+  if (!p.parentId) continue;
+  const arr = childrenByParent.get(p.parentId) ?? [];
+  arr.push(p);
+  childrenByParent.set(p.parentId, arr);
+}
+---
+
+<nav>
+  <ul class="nav">
+    {topItems.map((item) => {
+      const kids = childrenByParent.get(item._id) ?? [];
+      return (
+        <li>
+          {kids.length > 0 ? (
+            <details>
+              <summary>{item.title}</summary>
+              <ul class="drop">
+                <li><a href={`/${item.slug}`}>Oversikt</a></li>
+                {kids.map((k) => (
+                  <li><a href={`/${item.slug}/${k.slug}`}>{k.title}</a></li>
+                ))}
+              </ul>
+            </details>
+          ) : (
+            <a href={`/${item.slug}`}>{item.title}</a>
+          )}
+        </li>
+      );
+    })}
+  </ul>
+</nav>
+
+<style>
+  .nav { display:flex; gap:16px; list-style:none; padding:0; margin:0; }
+  details { position:relative; }
+  summary { cursor:pointer; list-style:none; }
+  summary::-webkit-details-marker { display:none; }
+  .drop { position:absolute; top:100%; left:0; margin:8px 0 0; padding:8px; list-style:none;
+          border:1px solid rgba(255,255,255,.15); border-radius:10px; background: rgba(20,20,20,.95); min-width:180px; }
+  .drop a { display:block; padding:8px 10px; text-decoration:none; }
+</style>

@@ -1,48 +1,192 @@
 ---
 import groq from "groq";
-import { sanity } from "../lib/sanityClient.ts";
-import { buildPathSegments, type RouteDoc } from "../lib/routes.ts";
+import { sanity } from "../lib/sanityClient";
+import { fetchRoutes, buildPathSegments, type RouteDoc } from "../lib/routes";
 import { toHTML } from "@portabletext/to-html";
+import { urlFor, buildSrcset } from "../lib/sanityImage";
 
-export const prerender = true;
+// Fil for å håndtere alle sider som ikke har en spesifikk .astro-fil, og i stedet baseres på innholdet i Sanity. Dette gjør at vi kan lage nye sider i Sanity uten å måtte endre frontend-koden, så lenge de følger strukturen vi har satt opp. Koden er skapt ved hjelp av AI (ChatGPT).
 
-export const getStaticPaths = async () => {
-  const pages: RouteDoc[] = await sanity.fetch(groq`
-    *[_type == "page" && defined(slug.current)]{
+// --- PortableText -> HTML helpers ---
+function escapeHtml(str: unknown) {
+  return String(str ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function portableTextToHtml(value: any) {
+  return toHTML(value ?? [], {
+    components: {
+      types: {
+        image: ({ value }) => {
+          const src = urlFor(value).width(1400).fit("max").url();
+          const srcset = buildSrcset(value);
+          const alt = escapeHtml(value?.alt ?? "");
+          const caption = value?.caption ? escapeHtml(value.caption) : "";
+          const sizes = "(max-width: 760px) 100vw, 760px";
+
+          return `
+<figure class="pt-figure">
+  <img
+    class="pt-image"
+    src="${src}"
+    srcset="${srcset}"
+    sizes="${sizes}"
+    alt="${alt}"
+    loading="lazy"
+    decoding="async"
+  />
+  ${caption ? `<figcaption class="pt-caption">${caption}</figcaption>` : ""}
+</figure>`;
+        },
+      },
+    },
+  });
+}
+
+// --- Static paths (IMPORTANT: slug must be STRING for [...slug].astro) ---
+export async function getStaticPaths() {
+  const routes: RouteDoc[] = await fetchRoutes();
+  const byId = new Map(routes.map((r) => [r._id, r]));
+
+  return routes.map((r) => ({
+    params: { slug: buildPathSegments(r, byId).join("/") },
+  }));
+}
+
+// --- Find the current route match ---
+const urlPath = Astro.params.slug ?? "";
+
+const routes: RouteDoc[] = await fetchRoutes();
+const byId = new Map(routes.map((r) => [r._id, r]));
+const match = routes.find((r) => buildPathSegments(r, byId).join("/") === urlPath);
+
+if (!match) return new Response("Not found", { status: 404 });
+
+// --- Fetch document depending on route type ---
+let doc: any = null;
+
+if (match.type === "page") {
+  doc = await sanity.fetch(
+    groq`*[_type=="page" && _id==$id][0]{
       _id,
       title,
-      "slug": slug.current,
-      "parentId": parent._ref
-    }
-  `);
+      content
+    }`,
+    { id: match._id }
+  );
+} else {
+  doc = await sanity.fetch(
+    groq`*[_type=="work" && _id==$id][0]{
+      _id,
+      title,
+      description,
+      mainImage{
+        ...,
+        alt
+      }
+    }`,
+    { id: match._id }
+  );
+}
 
-  const byId = new Map(pages.map((p) => [p._id, p]));
+if (!doc) return new Response("Not found", { status: 404 });
 
-  return pages.map((p) => ({
-    // ✅ send string, ikke array
-    params: { slug: buildPathSegments(p, byId).join("/") },
-    props: { id: p._id },
-  }));
-};
+// --- Renderable HTML for content/description ---
+const html =
+  match.type === "page"
+    ? portableTextToHtml(doc.content)
+    : portableTextToHtml(doc.description);
 
-const { id } = Astro.props as { id: string };
+// --- Optional: children list for Pages (skjelettvennlig) ---
+let children: { _id: string; title: string; slug: string }[] = [];
+if (match.type === "page") {
+  children = await sanity.fetch(
+    groq`*[_type=="page" && parent._ref==$id && defined(slug.current)] | order(title asc){
+      _id, title, "slug": slug.current
+    }`,
+    { id: match._id }
+  );
+}
 
-const page = await sanity.fetch(
-  groq`*[_type == "page" && _id == $id][0]{ title, content }`,
-  { id }
-);
-
-const html = page?.content ? toHTML(page.content) : "";
-
-if (!page) Astro.response.status = 404;
+const baseHref = "/" + urlPath;
 ---
 
-{page ? (
-  <>
-   <h1>{page.title}</h1>
-<div set:html={html} />
+<html lang="no">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{doc.title}</title>
+  </head>
 
-  </>
-) : (
-  <h1>Not found</h1>
-)}
+  <body>
+    <main class="wrap">
+      <header class="header">
+        <h1 class="title">{doc.title}</h1>
+      </header>
+
+      {/* WORK: main image */}
+      {match.type === "work" && doc?.mainImage && (
+        <figure class="pt-figure">
+          <img
+            class="pt-image"
+            src={urlFor(doc.mainImage).width(1400).fit("max").url()}
+            srcset={buildSrcset(doc.mainImage)}
+            sizes="(max-width: 760px) 100vw, 760px"
+            alt={doc.mainImage?.alt ?? ""}
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+      )}
+
+      {/* PAGE/WORK: portable text */}
+      <section class="pt" set:html={html} />
+
+      {/* PAGE: children list (optional, super for testing) */}
+      {match.type === "page" && children?.length > 0 && (
+        <section class="children">
+          <h2>Undersider</h2>
+          <ul>
+            {children.map((c) => (
+              <li><a href={`${baseHref}/${c.slug}`}>{c.title}</a></li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </main>
+
+    <style>
+      .wrap { padding: 24px; max-width: 880px; margin: 0 auto; }
+      .title { font-size: 2.2rem; margin: 0 0 1rem; }
+
+      /* Portable text basic */
+      .pt :global(p) { line-height: 1.7; margin: 0 0 1rem; max-width: 760px; }
+      .pt :global(h2) { margin: 2rem 0 0.75rem; }
+      .pt :global(ul) { margin: 0 0 1rem 1.25rem; }
+
+      /* Pretty images */
+      .pt-figure { margin: 1.25rem 0 1.75rem; }
+      .pt-image {
+        display: block;
+        width: 100%;
+        max-width: 760px;
+        height: auto;
+        border-radius: 14px;
+        border: 1px solid rgba(0,0,0,.08);
+      }
+      .pt-caption {
+        max-width: 760px;
+        margin-top: .5rem;
+        font-size: .95rem;
+        opacity: .75;
+      }
+
+      .children h2 { margin-top: 2rem; }
+      .children a { text-decoration: underline; }
+    </style>
+  </body>
+</html>
