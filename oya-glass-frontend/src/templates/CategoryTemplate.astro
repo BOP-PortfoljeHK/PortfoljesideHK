@@ -1,0 +1,48 @@
+---
+// Midlertidig template for kategori-sider.
+import { urlFor } from "../lib/sanityImage";
+const { data } = Astro.props;
+---
+
+<main>
+  <h1>{data.title}</h1>
+
+  {data.coverImage && (
+    <img
+      src={urlFor(data.coverImage).width(1400).quality(80).url()}
+      alt={data.title}
+      style="max-width:600px; height:auto; display:block; margin:1rem 0;"
+      loading="lazy"
+    />
+  )}
+
+  {data.description && <p>{data.description}</p>}
+
+  {data.series?.length > 0 && (
+    <>
+      <h2>Serier</h2>
+      <ul>
+        {data.series.map((serie: any) => (
+          <li>
+            <a href={`/${data.slug}/${serie.slug}`}>{serie.title}</a>
+          </li>
+        ))}
+      </ul>
+    </>
+  )}
+
+  {data.works?.length > 0 && (
+    <>
+      <h2>Verk</h2>
+      <ul>
+        {data.works.map((work: any) => (
+          <li>
+            <a href={`/${data.slug}/${work.slug}`}>
+              {work.title} {work.year && `(${work.year})`}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </>
+  )}
+</main>

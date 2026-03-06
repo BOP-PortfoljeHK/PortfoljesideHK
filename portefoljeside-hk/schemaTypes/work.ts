@@ -1,58 +1,93 @@
-import { defineType, defineField } from "sanity";
+import { defineField, defineType } from "sanity";
 
-// Denne filen definerer "work" dokumenttypen i Sanity. Hver "work" representerer et enkelt verk/prosjekt,
-// og kan ha en tittel, slug, kategori (referanse til "page"), hovedbilde, galleri og beskrivelse. 
-// "Work" dokumentene brukes for å vise verk automatisk på kategorisidene basert på hvilken kategori (Page) de tilhører. 
-// Denne delen vises kun i redigeringsgrensesnittet.
-
-export const work = defineType({
+export default defineType({
   name: "work",
   title: "Work",
   type: "document",
   fields: [
     defineField({
-  name: "info",
-  title: "Hva er dette?",
-  type: "text",
-  readOnly: true,
-  initialValue:
-    "Work er et enkelt verk/prosjekt. Velg hvilken kategori (Page) det tilhører. Dette brukes for å vise verk automatisk på kategorisidene. Denne delen vises kun i redigeringsgrensesnitttet.",
-}),
-    defineField({
       name: "title",
       title: "Tittel",
       type: "string",
-      validation: (R) => R.required(),
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "slug",
-      title: "Slug",
+      title: "Slug (URL)",
       type: "slug",
-      options: { source: "title" },
-      validation: (R) => R.required(),
+      options: { source: "title", maxLength: 96 },
+      validation: (Rule) => Rule.required(),
     }),
+
     defineField({
-      name: "categoryPage",
-      title: "Kategori (Page)",
+      name: "category",
+      title: "Category",
       type: "reference",
-      to: [{ type: "page" }],
-      validation: (R) => R.required(),
-      description: "Pek til f.eks. en spesifikk kategori/kolleksjon (Page) for å gruppere arbeider. Valgfritt.",
-    }),
-
-     defineField({
-      name: "mainImage",
-      title: "Hovedbilde",
-      type: "image",
-      options: { hotspot: true },
-      fields: [{ name: "alt", title: "Alt-tekst", type: "string" }],
+      to: [{ type: "category" }],
+      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
-      name: "gallery",
-      title: "Galleri",
+    name: "series",
+    title: "Serie (valgfritt)",
+    type: "reference",
+    to: [{ type: "series" }],
+    options: {
+        filter: ({ document }) => {
+        // Hvis kategori ikke er valgt ennå, ikke filtrer (eller returner tomt)
+        const categoryRef = (document as any)?.category?._ref;
+        if (!categoryRef) {
+            return { filter: "false" }; // viser ingen serier før kategori er valgt
+            // Alternativ: return { filter: "" } for å vise alle (men jeg anbefaler å kreve kategori først)
+        }
+        return {
+            filter: "category._ref == $categoryRef",
+            params: { categoryRef },
+        };
+        },
+    },
+    description: "Velg kategori først, så får du riktig serie-liste.",
+    }),
+
+    defineField({
+      name: "year",
+      title: "År",
+      type: "number",
+    }),
+
+    defineField({
+      name: "medium",
+      title: "Medium",
+      type: "string",
+      description: 'F.eks. "Oil on canvas", "Bronze", "Acrylic on paper".',
+    }),
+
+    defineField({
+      name: "dimensions",
+      title: "Dimensjoner",
+      type: "string",
+      description: 'F.eks. "80×100 cm".',
+    }),
+
+    defineField({
+      name: "images",
+      title: "Bilder",
       type: "array",
-      of: [{ type: "image", options: { hotspot: true } }],
+      of: [
+        {
+          type: "image",
+          options: { hotspot: true },
+          fields: [
+            defineField({
+              name: "alt",
+              title: "Alt-tekst",
+              type: "string",
+              description: "Kort beskrivelse av bildet (valgfritt).",
+            }),
+          ],
+        },
+      ],
+      validation: (Rule) => Rule.min(1).warning("Legg gjerne inn minst 1 bilde."),
     }),
 
     defineField({
@@ -62,4 +97,12 @@ export const work = defineType({
       of: [{ type: "block" }],
     }),
   ],
+
+  preview: {
+    select: {
+      title: "title",
+      subtitle: "category.title",
+      media: "images.0",
+    },
+  },
 });

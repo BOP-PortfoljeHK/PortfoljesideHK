@@ -1,0 +1,37 @@
+---
+// template for work-sider.
+import { urlFor, buildSrcset } from "../lib/sanityImage";
+const { data } = Astro.props;
+---
+
+<main>
+  <h1>{data.title}</h1>
+
+  {data.year && <p>År: {data.year}</p>}
+  {data.medium && <p>Medium: {data.medium}</p>}
+  {data.dimensions && <p>Dimensjoner: {data.dimensions}</p>}
+  {data.availability && <p>Status: {data.availability}</p>}
+
+  {data.images?.length > 0 && (
+    <div>
+      {data.images.map((img: any) => (
+        <img
+          src={urlFor(img).width(900).quality(80).url()}
+          srcset={buildSrcset(img)}
+          sizes="(max-width: 600px) 100vw, 600px"
+          alt={img.alt || data.title}
+          style="max-width:400px; margin-bottom:1rem;"
+          loading="lazy"
+        />
+      ))}
+    </div>
+  )}
+
+  {data.description && (
+    <div>
+      {data.description.map((block: any) =>
+        block.children?.map((child: any) => <p>{child.text}</p>)
+      )}
+    </div>
+  )}
+</main>

@@ -1,194 +1,222 @@
 ---
+// Egen fil for å kunne opprette dynamiske ruter, basert på input fra Sanity. 
+// Dynamiske sider: Category, Series og Work. Alle disse har en "slug" i Sanity, som vi bruker for å bygge URL-er. 
+// Koden i denne filen er skapt ved hjelp av AI (ChatGPT).
+
 import groq from "groq";
 import { sanity } from "../lib/sanityClient";
-import { fetchRoutes, buildPathSegments, type RouteDoc } from "../lib/routes";
-import { toHTML } from "@portabletext/to-html";
-import { urlFor, buildSrcset } from "../lib/sanityImage";
 
-// Fil for å håndtere alle sider som ikke har en spesifikk .astro-fil, og i stedet baseres på innholdet i Sanity. 
-// Dette gjør at vi kan lage nye sider i Sanity uten å måtte endre frontend-koden, 
-// så lenge de følger strukturen vi har satt opp. Koden er skapt ved hjelp av AI (ChatGPT).
+import CategoryTemplate from "../templates/CategoryTemplate.astro";
+import SeriesTemplate from "../templates/SeriesTemplate.astro";
+import WorkTemplate from "../templates/WorkTemplate.astro";
 
-// --- PortableText -> HTML helpers ---
-function escapeHtml(str: unknown) {
-  return String(str ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function portableTextToHtml(value: any) {
-  return toHTML(value ?? [], {
-    components: {
-      types: {
-        image: ({ value }) => {
-          const src = urlFor(value).width(1400).fit("max").url();
-          const srcset = buildSrcset(value);
-          const alt = escapeHtml(value?.alt ?? "");
-          const caption = value?.caption ? escapeHtml(value.caption) : "";
-          const sizes = "(max-width: 760px) 100vw, 760px";
-
-          return `
-<figure class="pt-figure">
-  <img
-    class="pt-image"
-    src="${src}"
-    srcset="${srcset}"
-    sizes="${sizes}"
-    alt="${alt}"
-    loading="lazy"
-    decoding="async"
-  />
-  ${caption ? `<figcaption class="pt-caption">${caption}</figcaption>` : ""}
-</figure>`;
-        },
-      },
-    },
-  });
-}
-
-// --- Static paths (IMPORTANT: slug must be STRING for [...slug].astro) ---
+/** --------
+ * getStaticPaths
+ * -------- */
 export async function getStaticPaths() {
-  const routes: RouteDoc[] = await fetchRoutes();
-  const byId = new Map(routes.map((r) => [r._id, r]));
+  const query = groq`
+  {
+    "categories": *[_type=="category" && defined(slug.current)]{
+      "category": slug.current
+    },
 
-  return routes.map((r) => ({
-    params: { slug: buildPathSegments(r, byId).join("/") },
-  }));
+    "series": *[
+      _type=="series" &&
+      defined(slug.current) &&
+      defined(category->slug.current)
+    ]{
+      "category": category->slug.current,
+      "series": slug.current
+    },
+
+    "works": *[
+      _type=="work" &&
+      defined(slug.current) &&
+      defined(category->slug.current)
+    ]{
+      "category": category->slug.current,
+      "seriesSlug": series->slug.current,
+      "work": slug.current
+    }
+  }`;
+
+  const data = await sanity.fetch(query);
+
+  const categoryPaths = (data?.categories ?? [])
+    .map((c: any) => c?.category)
+    .filter((v: any) => typeof v === "string" && v.length > 0)
+    .map((category: string) => ({
+      params: { slug: category },
+    }));
+
+  const seriesPaths = (data?.series ?? [])
+    .map((s: any) => ({ category: s?.category, series: s?.series }))
+    .filter(
+      (s: any) =>
+        typeof s.category === "string" &&
+        s.category.length > 0 &&
+        typeof s.series === "string" &&
+        s.series.length > 0
+    )
+    .map((s: any) => ({
+      params: { slug: `${s.category}/${s.series}` }, 
+    }));
+
+  const workPaths = (data?.works ?? [])
+    .map((w: any) => ({
+      category: w?.category,
+      seriesSlug: w?.seriesSlug,
+      work: w?.work,
+    }))
+    .filter(
+      (w: any) =>
+        typeof w.category === "string" &&
+        w.category.length > 0 &&
+        typeof w.work === "string" &&
+        w.work.length > 0
+    )
+    .map((w: any) => {
+      if (typeof w.seriesSlug === "string" && w.seriesSlug.length > 0) {
+        return { params: { slug: `${w.category}/${w.seriesSlug}/${w.work}` } }; 
+      }
+      // fallback: work uten serie → /{category}/{work}
+      return { params: { slug: `${w.category}/${w.work}` } }; 
+    });
+
+  return [...categoryPaths, ...seriesPaths, ...workPaths];
 }
 
-// --- Find the current route match ---
-const urlPath = Astro.params.slug ?? "";
+const slugStr = Astro.params.slug;
+const segments = typeof slugStr === "string" ? slugStr.split("/") : [];
 
-const routes: RouteDoc[] = await fetchRoutes();
-const byId = new Map(routes.map((r) => [r._id, r]));
-const match = routes.find((r) => buildPathSegments(r, byId).join("/") === urlPath);
+/** --------
+ * Runtime: finn side basert på segments
+ * -------- */
 
-if (!match) return new Response("Not found", { status: 404 });
+const len = segments.length;
+const [categorySlug, second, third] = segments;
 
-// --- Fetch document depending on route type ---
-let doc: any = null;
+let pageType: "category" | "series" | "work" | null = null;
+let data: any = null;
 
-if (match.type === "page") {
-  doc = await sanity.fetch(
-    groq`*[_type=="page" && _id==$id][0]{
+// /{category}
+if (len === 1) {
+  pageType = "category";
+  data = await sanity.fetch(
+    groq`
+    *[_type=="category" && slug.current==$category][0]{
       _id,
       title,
-      content
-    }`,
-    { id: match._id }
-  );
-} else {
-  doc = await sanity.fetch(
-    groq`*[_type=="work" && _id==$id][0]{
-      _id,
-      title,
+      "slug": slug.current,
       description,
-      mainImage{
-        ...,
-        alt
+      coverImage,
+      "series": *[_type=="series" && category._ref==^._id] | order(title asc){
+        _id, title, "slug": slug.current, coverImage
+      },
+      "works": *[_type=="work" && category._ref==^._id] | order(coalesce(year, 0) desc, _createdAt desc){
+        _id, title, "slug": slug.current, year, medium, availability
       }
     }`,
-    { id: match._id }
+    { category: categorySlug }
   );
 }
 
-if (!doc) return new Response("Not found", { status: 404 });
-
-// --- Renderable HTML for content/description ---
-const html =
-  match.type === "page"
-    ? portableTextToHtml(doc.content)
-    : portableTextToHtml(doc.description);
-
-// --- Optional: children list for Pages (skjelettvennlig) ---
-let children: { _id: string; title: string; slug: string }[] = [];
-if (match.type === "page") {
-  children = await sanity.fetch(
-    groq`*[_type=="page" && parent._ref==$id && defined(slug.current)] | order(title asc){
-      _id, title, "slug": slug.current
+// /{category}/{series}  (eller fallback /{category}/{work} uten serie)
+else if (len === 2) {
+  // Prøv SERIES først
+  const seriesData = await sanity.fetch(
+    groq`
+    *[_type=="series" &&
+      slug.current==$series &&
+      category->slug.current==$category
+    ][0]{
+      _id,
+      title,
+      "slug": slug.current,
+      description,
+      coverImage,
+      category->{_id, title, "slug": slug.current},
+      "works": *[_type=="work" && series._ref==^._id] | order(coalesce(year, 0) desc, _createdAt desc){
+        _id, title, "slug": slug.current, year, medium, availability
+      }
     }`,
-    { id: match._id }
+    { category: categorySlug, series: second }
+  );
+
+  if (seriesData) {
+    pageType = "series";
+    data = seriesData;
+  } else {
+    // Fallback: WORK uten serie
+    const workData = await sanity.fetch(
+      groq`
+      *[_type=="work" &&
+        slug.current==$work &&
+        category->slug.current==$category &&
+        !defined(series)
+      ][0]{
+        _id,
+        title,
+        "slug": slug.current,
+        year,
+        medium,
+        dimensions,
+        availability,
+        images,
+        description,
+        category->{title, "slug": slug.current}
+      }`,
+      { category: categorySlug, work: second }
+    );
+
+    if (workData) {
+      pageType = "work";
+      data = workData;
+    }
+  }
+}
+
+// /{category}/{series}/{work}
+else if (len === 3) {
+  pageType = "work";
+  data = await sanity.fetch(
+    groq`
+    *[_type=="work" &&
+      slug.current==$work &&
+      category->slug.current==$category &&
+      series->slug.current==$series
+    ][0]{
+      _id,
+      title,
+      "slug": slug.current,
+      year,
+      medium,
+      dimensions,
+      availability,
+      images,
+      description,
+      category->{title, "slug": slug.current},
+      series->{title, "slug": slug.current}
+    }`,
+    { category: categorySlug, series: second, work: third }
   );
 }
 
-const baseHref = "/" + urlPath;
+// 404 hvis ingen data
+if (!data || !pageType) {
+  Astro.response.status = 404;
+}
 ---
 
-<html lang="no">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{doc.title}</title>
-  </head>
-
-  <body>
-    <main class="wrap">
-      <header class="header">
-        <h1 class="title">{doc.title}</h1>
-      </header>
-
-      {/* WORK: main image */}
-      {match.type === "work" && doc?.mainImage && (
-        <figure class="pt-figure">
-          <img
-            class="pt-image"
-            src={urlFor(doc.mainImage).width(1400).fit("max").url()}
-            srcset={buildSrcset(doc.mainImage)}
-            sizes="(max-width: 760px) 100vw, 760px"
-            alt={doc.mainImage?.alt ?? ""}
-            loading="lazy"
-            decoding="async"
-          />
-        </figure>
-      )}
-
-      {/* PAGE/WORK: portable text */}
-      <section class="pt" set:html={html} />
-
-      {/* PAGE: children list (optional, super for testing) */}
-      {match.type === "page" && children?.length > 0 && (
-        <section class="children">
-          <h2>Undersider</h2>
-          <ul>
-            {children.map((c) => (
-              <li><a href={`${baseHref}/${c.slug}`}>{c.title}</a></li>
-            ))}
-          </ul>
-        </section>
-      )}
-    </main>
-
-    <style>
-      .wrap { padding: 24px; max-width: 880px; margin: 0 auto; }
-      .title { font-size: 2.2rem; margin: 0 0 1rem; }
-
-      /* Portable text basic */
-      .pt :global(p) { line-height: 1.7; margin: 0 0 1rem; max-width: 760px; }
-      .pt :global(h2) { margin: 2rem 0 0.75rem; }
-      .pt :global(ul) { margin: 0 0 1rem 1.25rem; }
-
-      /* Pretty images */
-      .pt-figure { margin: 1.25rem 0 1.75rem; }
-      .pt-image {
-        display: block;
-        width: 100%;
-        max-width: 760px;
-        height: auto;
-        border-radius: 14px;
-        border: 1px solid rgba(0,0,0,.08);
-      }
-      .pt-caption {
-        max-width: 760px;
-        margin-top: .5rem;
-        font-size: .95rem;
-        opacity: .75;
-      }
-
-      .children h2 { margin-top: 2rem; }
-      .children a { text-decoration: underline; }
-    </style>
-  </body>
-</html>
+{Astro.response.status === 404 ? (
+  <main style="padding:2rem">
+    <h1>404</h1>
+    <p>Siden finnes ikke.</p>
+  </main>
+) : (
+  <>
+    {pageType === "category" && <CategoryTemplate data={data} />}
+    {pageType === "series" && <SeriesTemplate data={data} />}
+    {pageType === "work" && <WorkTemplate data={data} />}
+  </>
+)}
