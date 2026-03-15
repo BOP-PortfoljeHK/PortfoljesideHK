@@ -1,1 +1,48 @@
 @import "tailwindcss";
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid #ddd;
+    background: white;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+}
+.nav-links {
+    display: auto;
+    gap: 5rem;
+    margin-left: auto;
+}
+
+.nav a {
+    text-decoration: none;
+    color: black;
+    font-weight: 500;
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-decoration: none;
+    color: black;
+}
+
+.nav-links a + a {
+    margin-left: 3rem;
+}
+
+main {
+    padding-top: 100px;
+}
