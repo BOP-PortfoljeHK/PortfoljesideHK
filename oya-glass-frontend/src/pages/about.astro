@@ -1,8 +1,49 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import groq from "groq";
+import { sanity } from "../lib/sanityClient";
+
+const about = await sanity.fetch(groq`
+    *[_type == "about"][0]{
+        title,
+        "portraitUrl": portrait.asset->url,
+        bio,
+        CV
+    }
+`);
 ---
 
 <Layout>
-    <h1 class="text-4xl text-blue-600 font-bold">Om Hanna</h1>
-    <p>Her kommer det informasjon om kunstneren Hanna</p>
+    <section class="max-w-6xl mx-auto py-16">
+        <div class="grid md:grid-cols-2 gap-10 items-start">
+            <div>
+                <img 
+                src={about.portraitUrl} 
+                alt="Portrett av Hanna" 
+                class="w-full max-w-sm object-cover rounded-lg"
+                />
+            </div>
+
+            <div>
+                <h1 class="text-4xl font-bold mb-8">{about.title}</h1>
+
+                <div class="space-y-4">
+                    {about.bio.map((block: any) => (
+                        <p class="text-lg leading-relaxed text-gray-700">
+                            {block.children[0].text}
+                        </p>
+                    ))}
+                </div>
+            </div>
+        </div>    
+
+        <div class="mt-16 border-t pt-8">
+            <h2 class="text-2xl font-semibold mb-4">CV</h2>
+            <ul class="list-disc ml-6 spac-y-2">
+                {about.CV?.map((item: string) => (
+                    <li class="text-gray-700">{item}</li>
+                ))}
+            </ul>
+        </div>
+    </section>    
 </Layout>

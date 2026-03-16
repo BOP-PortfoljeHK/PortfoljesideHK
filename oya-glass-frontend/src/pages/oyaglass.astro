@@ -1,8 +1,32 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import groq from "groq";
+import { sanity } from "../lib/sanityClient";
+
+const oyaglass = await sanity.fetch(groq`
+    *[_type == "oyaglass"][0]{
+        title,
+        "portraitUrl": portrait.asset->url,
+        bio,
+        highlights
+    }
+`);
 ---
 
 <Layout>
-    <h1 class="text-4xl text-blue-600 font-bold">Her kommer det bilder og informasjon om glass-studio</h1>
-    <h2>Tester ut forskjellig ting</h2>
+    <h1>{oyaglass.title}</h1>
+
+    <img src={oyaglass.portraitUrl} alt={oyaglass.title} width=300 />
+
+    <div>
+        {oyaglass.bio?.map((block: any) => ( 
+            <p>{block.children[0].text}</p>
+        ))}
+    </div>
+
+    <ul class="list-disc list-outside ml-6 space-y-2">
+        {oyaglass.highlights?.map((item: string) => ( 
+            <li class="text-gray-700">{item}</li>
+        ))}
+    </ul>
 </Layout>
