@@ -8,21 +8,22 @@ header {
     z-index: 1000;
     padding: 1rem 2rem;
     border-bottom: 1px solid #ddd;
-    background: white;
+    background: rgb(194, 177, 164);
 }
 
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
+    width: 100%;
+    padding: 0 2rem;
 }
 
 .nav {
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 .nav-links {
-    display: auto;
-    gap: 5rem;
+    display: flex;
+    gap: 1.5rem;
     margin-left: auto;
 }
 
@@ -39,10 +40,44 @@ header {
     color: black;
 }
 
-.nav-links a + a {
-    margin-left: 3rem;
-}
-
 main {
     padding-top: 100px;
 }
+
+html, body {
+    margin: 0;
+    min-height: 100%;
+}
+
+.site-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.site-main {
+    flex: 1;
+}
+
+footer {
+    width: 100%;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #ddd;
+    background:  rgb(194, 177, 164);
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+footer p {
+    margin: 0.3rem 0;
+    font-size: 0.9rem;
+    color: black;
+}
+
