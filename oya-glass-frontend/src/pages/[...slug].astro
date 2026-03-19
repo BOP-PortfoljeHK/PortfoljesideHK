@@ -5,6 +5,7 @@
 
 import groq from "groq";
 import { sanity } from "../lib/sanityClient";
+import Layout from "../layouts/Layout.astro";
 
 import CategoryTemplate from "../templates/CategoryTemplate.astro";
 import SeriesTemplate from "../templates/SeriesTemplate.astro";
@@ -208,11 +209,14 @@ if (!data || !pageType) {
 }
 ---
 
+<Layout>
 {Astro.response.status === 404 ? (
+  
   <main style="padding:2rem">
     <h1>404</h1>
     <p>Siden finnes ikke.</p>
   </main>
+  
 ) : (
   <>
     {pageType === "category" && <CategoryTemplate data={data} />}
@@ -220,3 +224,4 @@ if (!data || !pageType) {
     {pageType === "work" && <WorkTemplate data={data} />}
   </>
 )}
+</Layout>
