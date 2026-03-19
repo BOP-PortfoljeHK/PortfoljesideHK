@@ -1,48 +1,66 @@
 ---
-// Midlertidig template for kategori-sider.
+import Layout from "../layouts/Layout.astro";
 import { urlFor } from "../lib/sanityImage";
-const { data } = Astro.props;                                 
+
+const { data } = Astro.props;
 ---
 
-<main>
-  <h1>{data.title}</h1>
+<Layout title={data.title}>
+  <main class="mx-auto max-w-7xl px-6 py-12 md:px-10">
+    <section class="mb-12">
+     
+      <h1 class="mb-6 text-4xl font-semibold tracking-tight md:text-5xl">
+        {data.title}
+      </h1>
 
-  {data.coverImage && (
-    <img
-      src={urlFor(data.coverImage).width(1400).quality(80).url()}
-      alt={data.title}
-      style="max-width:600px; height:auto; display:block; margin:1rem 0;"
-      loading="lazy"
-    />
-  )}
+      {data.coverImage && (
+        <img
+          src={urlFor(data.coverImage).width(1600).height(900).fit("crop").url()}
+          alt={data.title}
+          class="mb-6 h-auto w-full rounded-2xl object-cover"
+        />
+      )}
 
-  {data.description && <p>{data.description}</p>}
+      {data.description && (
+        <p class="max-w-3xl text-base leading-7 text-neutral-700">
+          {data.description}
+        </p>
+      )}
+    </section>
 
-  {data.series?.length > 0 && (
-    <>
-      <h2>Serier</h2>
-      <ul>
-        {data.series.map((serie: any) => (
-          <li>
-            <a href={`/${data.slug}/${serie.slug}`}>{serie.title}</a>
-          </li>
-        ))}
-      </ul>
-    </>
-  )}
-
-  {data.works?.length > 0 && (
-    <>
-      <h2>Verk</h2>
-      <ul>
-        {data.works.map((work: any) => (
-          <li>
-            <a href={`/${data.slug}/${work.slug}`}>
-              {work.title} {work.year && `(${work.year})`}
+    {data.series?.length > 0 && (
+      <section class="mb-12">
+        <h2 class="mb-4 text-2xl font-semibold">Series</h2>
+        <div class="grid gap-4 md:grid-cols-2">
+          {data.series.map((series: any) => (
+            <a
+              href={`/${data.slug}/${series.slug}`}
+              class="rounded-2xl border border-neutral-200 p-5 transition hover:-translate-y-0.5 hover:shadow-sm"
+            >
+              <h3 class="text-lg font-medium">{series.title}</h3>
             </a>
-          </li>
-        ))}
-      </ul>
-    </>
-  )}
-</main>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {data.works?.length > 0 && (
+      <section>
+        <h2 class="mb-4 text-2xl font-semibold">Works</h2>
+        <div class="grid gap-4 md:grid-cols-2">
+          {data.works.map((work: any) => (
+            <a
+              href={`/${data.slug}/${work.slug}`}
+              class="rounded-2xl border border-neutral-200 p-5 transition hover:-translate-y-0.5 hover:shadow-sm"
+            >
+              <h3 class="text-lg font-medium">{work.title}</h3>
+              {work.year && (
+                <p class="mt-1 text-sm text-neutral-600">{work.year}</p>
+              )}
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </main>
+</Layout>
