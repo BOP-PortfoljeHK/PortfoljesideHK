@@ -1,37 +1,48 @@
 ---
-// template for work-sider.
-import { urlFor, buildSrcset } from "../lib/sanityImage";
+import Layout from "../layouts/Layout.astro";
+import { urlFor } from "../lib/sanityImage";
+
 const { data } = Astro.props;
+
+const firstImage =
+  Array.isArray(data.images) && data.images.length > 0 ? data.images[0] : null;
 ---
 
-<main>
-  <h1>{data.title}</h1>
+<Layout title={data.title}>
+  <main class="mx-auto max-w-7xl px-6 py-12 md:px-10">
+    <section class="grid gap-10 lg:grid-cols-2">
+      <div>
+        {firstImage && (
+          <img
+            src={urlFor(firstImage).width(1400).height(1400).fit("crop").url()}
+            alt={firstImage.alt || data.title}
+            class="h-auto w-full rounded-2xl object-cover"
+          />
+        )}
+      </div>
 
-  {data.year && <p>År: {data.year}</p>}
-  {data.medium && <p>Medium: {data.medium}</p>}
-  {data.dimensions && <p>Dimensjoner: {data.dimensions}</p>}
-  {data.availability && <p>Status: {data.availability}</p>}
+      <div>
+        <p class="mb-3 text-sm uppercase tracking-[0.2em] text-neutral-500">
+          Work
+        </p>
 
-  {data.images?.length > 0 && (
-    <div>
-      {data.images.map((img: any) => (
-        <img
-          src={urlFor(img).width(900).quality(80).url()}
-          srcset={buildSrcset(img)}
-          sizes="(max-width: 600px) 100vw, 600px"
-          alt={img.alt || data.title}
-          style="max-width:400px; margin-bottom:1rem;"
-          loading="lazy"
-        />
-      ))}
-    </div>
-  )}
+        <h1 class="mb-4 text-4xl font-semibold tracking-tight md:text-5xl">
+          {data.title}
+        </h1>
 
-  {data.description && (
-    <div>
-      {data.description.map((block: any) =>
-        block.children?.map((child: any) => <p>{child.text}</p>)
-      )}
-    </div>
-  )}
-</main>
+        <div class="space-y-2 text-neutral-700">
+          {data.year && <p><span class="font-medium">Year:</span> {data.year}</p>}
+          {data.medium && <p><span class="font-medium">Medium:</span> {data.medium}</p>}
+          {data.dimensions && <p><span class="font-medium">Dimensions:</span> {data.dimensions}</p>}
+          {data.availability && <p><span class="font-medium">Availability:</span> {data.availability}</p>}
+        </div>
+
+        {data.description && (
+          <div class="mt-8 prose max-w-none">
+            <p>{data.description}</p>
+          </div>
+        )}
+      </div>
+    </section>
+  </main>
+</Layout>

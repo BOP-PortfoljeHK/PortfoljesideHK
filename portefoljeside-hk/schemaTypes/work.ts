@@ -11,6 +11,7 @@ export default defineType({
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
+
     defineField({
       name: "slug",
       title: "Slug (URL)",
@@ -28,25 +29,26 @@ export default defineType({
     }),
 
     defineField({
-    name: "series",
-    title: "Serie (valgfritt)",
-    type: "reference",
-    to: [{ type: "series" }],
-    options: {
+      name: "series",
+      title: "Serie",
+      type: "reference",
+      to: [{ type: "series" }],
+      validation: (Rule) => Rule.required(),
+      options: {
         filter: ({ document }) => {
-        // Hvis kategori ikke er valgt ennå, ikke filtrer (eller returner tomt)
-        const categoryRef = (document as any)?.category?._ref;
-        if (!categoryRef) {
-            return { filter: "false" }; // viser ingen serier før kategori er valgt
-            // Alternativ: return { filter: "" } for å vise alle (men jeg anbefaler å kreve kategori først)
-        }
-        return {
+          const categoryRef = (document as any)?.category?._ref;
+
+          if (!categoryRef) {
+            return { filter: "false" };
+          }
+
+          return {
             filter: "category._ref == $categoryRef",
             params: { categoryRef },
-        };
+          };
         },
-    },
-    description: "Velg kategori først, så får du riktig serie-liste.",
+      },
+      description: "Velg kategori først, så får du riktig serie-liste.",
     }),
 
     defineField({
