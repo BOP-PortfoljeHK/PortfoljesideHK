@@ -6,7 +6,7 @@ header {
     left: 0;
     width: 100%;
     z-index: 1000;
-    padding: 1rem 2rem;
+    padding: 1rem 0;
     border-bottom: 1px solid #ddd;
     background: rgb(194, 177, 164);
 }
@@ -67,7 +67,7 @@ footer {
 }
 
 .footer-inner {
-    max-width: 1200px;
+    width: 100%;
     margin: 0 auto;
     padding: 0 2rem;
     display: flex;
