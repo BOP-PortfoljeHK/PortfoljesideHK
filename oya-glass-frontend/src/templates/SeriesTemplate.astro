@@ -3,11 +3,52 @@ import Layout from "../layouts/Layout.astro";
 import { urlFor } from "../lib/sanityImage";
 
 const { data } = Astro.props;
+
+const galleryItems =
+  data?.works?.flatMap((work: any) =>
+    (work.images ?? []).map((image: any, index: number) => ({
+      image,
+      workTitle: work.title,
+      workSlug: work.slug,
+      year: work.year,
+      medium: work.medium,
+      dimensions: work.dimensions,
+      alt:
+        typeof image?.alt === "string" && image.alt.trim().length > 0
+          ? image.alt
+          : work.title,
+      key: `${work._id}-${index}`,
+    }))
+  ) ?? [];
+
+function normalizeMarks(children: any[] = []) {
+  return children.map((child: any) => {
+    const text = child.text ?? "";
+
+    if (child.marks?.includes("strong")) {
+      return { type: "strong", text };
+    }
+
+    if (child.marks?.includes("em")) {
+      return { type: "em", text };
+    }
+
+    return { type: "text", text };
+  });
+}
+
+const descriptionBlocks =
+  data?.description
+    ?.filter((block: any) => block._type === "block")
+    .map((block: any) => ({
+      style: block.style ?? "normal",
+      children: normalizeMarks(block.children ?? []),
+    })) ?? [];
 ---
 
 <Layout title={data.title}>
   <main class="mx-auto max-w-7xl px-6 py-12 md:px-10">
-    <section class="mb-12">
+    <section class="mb-14">
       <p class="mb-3 text-sm uppercase tracking-[0.2em] text-neutral-500">
         Series
       </p>
@@ -16,38 +57,184 @@ const { data } = Astro.props;
         {data.title}
       </h1>
 
-      {data.coverImage && (
-        <img
-          src={urlFor(data.coverImage).width(1600).height(900).fit("crop").url()}
-          alt={data.title}
-          class="mb-6 h-auto w-full rounded-2xl object-cover"
-        />
-      )}
-
-      {data.description && (
-        <p class="max-w-3xl text-base leading-7 text-neutral-700">
-          {data.description}
-        </p>
+      {descriptionBlocks.length > 0 && (
+        <div class="max-w-3xl space-y-5">
+          {descriptionBlocks.map((block: any) =>
+            block.style === "h2" ? (
+              <h2 class="text-2xl font-semibold text-neutral-900">
+                {block.children.map((child: any) =>
+                  child.type === "strong" ? (
+                    <strong class="font-semibold text-neutral-900">{child.text}</strong>
+                  ) : child.type === "em" ? (
+                    <em class="italic">{child.text}</em>
+                  ) : (
+                    child.text
+                  )
+                )}
+              </h2>
+            ) : block.style === "h3" ? (
+              <h3 class="text-xl font-semibold text-neutral-900">
+                {block.children.map((child: any) =>
+                  child.type === "strong" ? (
+                    <strong class="font-semibold text-neutral-900">{child.text}</strong>
+                  ) : child.type === "em" ? (
+                    <em class="italic">{child.text}</em>
+                  ) : (
+                    child.text
+                  )
+                )}
+              </h3>
+            ) : block.style === "blockquote" ? (
+              <blockquote class="border-l-4 border-neutral-300 pl-4 italic text-neutral-600">
+                {block.children.map((child: any) =>
+                  child.type === "strong" ? (
+                    <strong class="font-semibold text-neutral-900">{child.text}</strong>
+                  ) : child.type === "em" ? (
+                    <em class="italic">{child.text}</em>
+                  ) : (
+                    child.text
+                  )
+                )}
+              </blockquote>
+            ) : (
+              <p class="text-base leading-8 text-neutral-700">
+                {block.children.map((child: any) =>
+                  child.type === "strong" ? (
+                    <strong class="font-semibold text-neutral-900">{child.text}</strong>
+                  ) : child.type === "em" ? (
+                    <em class="italic">{child.text}</em>
+                  ) : (
+                    child.text
+                  )
+                )}
+              </p>
+            )
+          )}
+        </div>
       )}
     </section>
 
-    {data.works?.length > 0 && (
-      <section>
-        <h2 class="mb-4 text-2xl font-semibold">Works</h2>
-        <div class="grid gap-4 md:grid-cols-2">
-          {data.works.map((work: any) => (
-            <a
-              href={`/${data.category.slug}/${data.slug}/${work.slug}`}
-              class="rounded-2xl border border-neutral-200 p-5 transition hover:-translate-y-0.5 hover:shadow-sm"
-            >
-              <h3 class="text-lg font-medium">{work.title}</h3>
-              {work.year && (
-                <p class="mt-1 text-sm text-neutral-600">{work.year}</p>
-              )}
-            </a>
-          ))}
-        </div>
+    {galleryItems.length > 0 && (
+      <section class="grid gap-12 lg:grid-cols-2">
+        {galleryItems.map((item: any) => {
+          const previewUrl = urlFor(item.image).width(1800).fit("max").url();
+          const zoomUrl = urlFor(item.image).width(2600).fit("max").url();
+          const meta = [item.year, item.medium, item.dimensions]
+            .filter(Boolean)
+            .join(" · ");
+
+          return (
+            <figure class="group">
+              <button
+                type="button"
+                class="block w-full overflow-hidden rounded-2xl"
+                data-lightbox-image={zoomUrl}
+                data-lightbox-alt={item.alt}
+                data-lightbox-title={item.workTitle}
+                data-lightbox-meta={meta}
+                aria-label={`Åpne større bilde av ${item.workTitle}`}
+              >
+                <img
+                  src={previewUrl}
+                  alt={item.alt}
+                  loading="lazy"
+                  class="w-full rounded-2xl object-cover shadow-sm transition duration-300 group-hover:scale-[1.01]"
+                />
+              </button>
+
+              <figcaption class="mt-4 text-sm text-neutral-700">
+                <p class="text-lg font-medium text-neutral-900">{item.workTitle}</p>
+                {meta && <p class="mt-1 text-neutral-500">{meta}</p>}
+              </figcaption>
+            </figure>
+          );
+        })}
       </section>
     )}
   </main>
+
+  <div
+    id="lightbox"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 p-4"
+    aria-hidden="true"
+  >
+    <button
+      id="lightbox-close"
+      type="button"
+      class="absolute right-4 top-4 rounded-full bg-white/10 px-4 py-2 text-sm text-white backdrop-blur"
+      aria-label="Lukk bildevisning"
+    >
+      Lukk
+    </button>
+
+    <div class="flex max-h-[90vh] max-w-[90vw] flex-col items-center">
+      <img
+        id="lightbox-image"
+        src=""
+        alt=""
+        class="max-h-[80vh] max-w-[90vw] object-contain"
+      />
+
+      <p
+        id="lightbox-caption"
+        class="mt-4 text-center text-base font-medium text-white"
+      ></p>
+
+      <p
+        id="lightbox-meta"
+        class="mt-1 text-center text-sm text-white/80"
+      ></p>
+    </div>
+  </div>
+
+  <script>
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImage = document.getElementById("lightbox-image");
+    const lightboxCaption = document.getElementById("lightbox-caption");
+    const lightboxMeta = document.getElementById("lightbox-meta");
+    const closeButton = document.getElementById("lightbox-close");
+    const triggers = document.querySelectorAll("[data-lightbox-image]");
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener("click", () => {
+        const src = trigger.getAttribute("data-lightbox-image");
+        const alt = trigger.getAttribute("data-lightbox-alt") || "";
+        const title = trigger.getAttribute("data-lightbox-title") || "";
+        const meta = trigger.getAttribute("data-lightbox-meta") || "";
+
+        if (!lightbox || !lightboxImage || !lightboxCaption || !lightboxMeta || !src) return;
+
+        lightboxImage.setAttribute("src", src);
+        lightboxImage.setAttribute("alt", alt);
+        lightboxCaption.textContent = title;
+        lightboxMeta.textContent = meta;
+
+        lightbox.classList.remove("hidden");
+        lightbox.classList.add("flex");
+        lightbox.setAttribute("aria-hidden", "false");
+      });
+    });
+
+    function closeLightbox() {
+      if (!lightbox || !lightboxImage || !lightboxCaption || !lightboxMeta) return;
+
+      lightbox.classList.add("hidden");
+      lightbox.classList.remove("flex");
+      lightbox.setAttribute("aria-hidden", "true");
+      lightboxImage.setAttribute("src", "");
+      lightboxImage.setAttribute("alt", "");
+      lightboxCaption.textContent = "";
+      lightboxMeta.textContent = "";
+    }
+
+    closeButton?.addEventListener("click", closeLightbox);
+
+    lightbox?.addEventListener("click", (event) => {
+      if (event.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeLightbox();
+    });
+  </script>
 </Layout>

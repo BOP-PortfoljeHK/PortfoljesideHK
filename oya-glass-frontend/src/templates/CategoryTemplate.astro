@@ -44,23 +44,6 @@ const { data } = Astro.props;
       </section>
     )}
 
-    {data.works?.length > 0 && (
-      <section>
-        <h2 class="mb-4 text-2xl font-semibold">Works</h2>
-        <div class="grid gap-4 md:grid-cols-2">
-          {data.works.map((work: any) => (
-            <a
-              href={`/${data.slug}/${work.slug}`}
-              class="rounded-2xl border border-neutral-200 p-5 transition hover:-translate-y-0.5 hover:shadow-sm"
-            >
-              <h3 class="text-lg font-medium">{work.title}</h3>
-              {work.year && (
-                <p class="mt-1 text-sm text-neutral-600">{work.year}</p>
-              )}
-            </a>
-          ))}
-        </div>
-      </section>
-    )}
+    
   </main>
 </Layout>
