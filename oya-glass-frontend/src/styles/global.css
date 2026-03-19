@@ -6,7 +6,7 @@ header {
     left: 0;
     width: 100%;
     z-index: 1000;
-    padding: 1rem 0;
+    padding: 1rem 2rem;
     border-bottom: 1px solid #ddd;
     background: rgb(194, 177, 164);
 }
