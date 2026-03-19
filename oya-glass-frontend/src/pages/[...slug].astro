@@ -221,7 +221,7 @@ if (!data || !pageType) {
 }
 ---
 
-<Layout>
+
 {Astro.response.status === 404 ? (
   
   <main style="padding:2rem">
@@ -236,4 +236,3 @@ if (!data || !pageType) {
     {pageType === "work" && <WorkTemplate data={data} />}
   </>
 )}
-</Layout>
