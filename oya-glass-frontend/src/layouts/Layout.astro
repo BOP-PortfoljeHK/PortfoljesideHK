@@ -13,13 +13,15 @@ import Footer from "../components/Footer.astro";
 		<title>Hanna Karlsen</title>
 	</head>
 
-	<body class="site-layout">
-		<Header />
+	<body>
+		<div class="min-h-screen flex flex-col">
+			<Header />
 
-		<main class="site-main">
-			<slot />
-		</main>
+			<main class="flex-1 pt-\[100px\]">
+				<slot />
+			</main>
 
-		<Footer />
+			<Footer />
+		</div>
 	</body>
 </html>
