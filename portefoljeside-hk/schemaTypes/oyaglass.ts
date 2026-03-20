@@ -9,16 +9,16 @@ export default defineType({
   fields: [
     defineField({
       name: "title",
-      title: "Tittel",
+      title: "Title",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
 
     defineField({
-      name: "portrait",
-      title: "Portrett",
-      type: "image",
-      options: { hotspot: true },
+      name: "images",
+      title: "Images",
+      type: "array",
+      of: [{ type: "image", options: { hotspot: true } }],
     }),
 
     defineField({
@@ -28,19 +28,11 @@ export default defineType({
       of: [{ type: "block" }],
       validation: (Rule) => Rule.required(),
     }),
-
-    defineField({
-      name: "highlights",
-      title: "Høydepunkter",
-      description: "Kort liste (utstillinger, priser, presse, osv.)",
-      type: "array",
-      of: [{ type: "string" }],
-    }),
   ],
 
   preview: {
     prepare() {
-      return { title: "Om" };
+      return { title: "About" };
     },
   },
 });

@@ -5,21 +5,17 @@ import { urlFor } from "../lib/sanityImage";
 const { data } = Astro.props;
 
 const galleryItems =
-  data?.works?.flatMap((work: any) =>
-    (work.images ?? []).map((image: any, index: number) => ({
-      image,
-      workTitle: work.title,
-      workSlug: work.slug,
-      year: work.year,
-      medium: work.medium,
-      dimensions: work.dimensions,
-      alt:
-        typeof image?.alt === "string" && image.alt.trim().length > 0
-          ? image.alt
-          : work.title,
-      key: `${work._id}-${index}`,
-    }))
-  ) ?? [];
+  data?.works?.map((work: any) => ({
+    image: work.image,
+    workTitle: work.title,
+    year: work.year,
+    medium: work.medium,
+    dimensions: work.dimensions,
+    alt:
+      typeof work?.image?.alt === "string" && work.image.alt.trim().length > 0
+        ? work.image.alt
+        : work.title,
+  })) ?? [];
 
 function normalizeMarks(children: any[] = []) {
   return children.map((child: any) => {
@@ -116,7 +112,9 @@ const descriptionBlocks =
 
     {galleryItems.length > 0 && (
       <section class="grid gap-12 lg:grid-cols-2">
-        {galleryItems.map((item: any) => {
+        {galleryItems.map((item: any, index: number) => {
+          if (!item.image) return null;
+
           const previewUrl = urlFor(item.image).width(1800).fit("max").url();
           const zoomUrl = urlFor(item.image).width(2600).fit("max").url();
           const meta = [item.year, item.medium, item.dimensions]
@@ -128,6 +126,7 @@ const descriptionBlocks =
               <button
                 type="button"
                 class="block w-full overflow-hidden rounded-2xl"
+                data-lightbox-index={index}
                 data-lightbox-image={zoomUrl}
                 data-lightbox-alt={item.alt}
                 data-lightbox-title={item.workTitle}
@@ -161,10 +160,28 @@ const descriptionBlocks =
     <button
       id="lightbox-close"
       type="button"
-      class="absolute right-4 top-4 rounded-full bg-white/10 px-4 py-2 text-sm text-white backdrop-blur"
+      class="absolute right-6 top-4 rounded-full bg-white/10 px-4 py-2 text-sm text-white backdrop-blur transition hover:bg-white/20"
       aria-label="Lukk bildevisning"
     >
       Lukk
+    </button>
+
+    <button
+      id="lightbox-prev"
+      type="button"
+      class="absolute left-6 top-1/2 -translate-y-1/2 rounded-full bg-white/10 px-4 py-3 text-2xl text-white backdrop-blur transition hover:bg-white/20"
+      aria-label="Forrige bilde"
+    >
+      ←
+    </button>
+
+    <button
+      id="lightbox-next"
+      type="button"
+      class="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 px-4 py-3 text-2xl text-white backdrop-blur transition hover:bg-white/20"
+      aria-label="Neste bilde"
+    >
+      →
     </button>
 
     <div class="flex max-h-[90vh] max-w-[90vw] flex-col items-center">
@@ -184,6 +201,11 @@ const descriptionBlocks =
         id="lightbox-meta"
         class="mt-1 text-center text-sm text-white/80"
       ></p>
+
+      <p
+        id="lightbox-counter"
+        class="mt-2 text-center text-xs tracking-wide text-white/60"
+      ></p>
     </div>
   </div>
 
@@ -192,28 +214,51 @@ const descriptionBlocks =
     const lightboxImage = document.getElementById("lightbox-image");
     const lightboxCaption = document.getElementById("lightbox-caption");
     const lightboxMeta = document.getElementById("lightbox-meta");
+    const lightboxCounter = document.getElementById("lightbox-counter");
     const closeButton = document.getElementById("lightbox-close");
-    const triggers = document.querySelectorAll("[data-lightbox-image]");
+    const prevButton = document.getElementById("lightbox-prev");
+    const nextButton = document.getElementById("lightbox-next");
+    const triggers = Array.from(document.querySelectorAll("[data-lightbox-image]"));
 
-    triggers.forEach((trigger) => {
-      trigger.addEventListener("click", () => {
-        const src = trigger.getAttribute("data-lightbox-image");
-        const alt = trigger.getAttribute("data-lightbox-alt") || "";
-        const title = trigger.getAttribute("data-lightbox-title") || "";
-        const meta = trigger.getAttribute("data-lightbox-meta") || "";
+    let currentIndex = 0;
 
-        if (!lightbox || !lightboxImage || !lightboxCaption || !lightboxMeta || !src) return;
+    function showImage({ index }: { index: any; }): void {
+      const trigger = triggers[index];
+      if (!trigger || !lightbox || !lightboxImage || !lightboxCaption || !lightboxMeta) return;
 
-        lightboxImage.setAttribute("src", src);
-        lightboxImage.setAttribute("alt", alt);
-        lightboxCaption.textContent = title;
-        lightboxMeta.textContent = meta;
+      const src = trigger.getAttribute("data-lightbox-image");
+      const alt = trigger.getAttribute("data-lightbox-alt") || "";
+      const title = trigger.getAttribute("data-lightbox-title") || "";
+      const meta = trigger.getAttribute("data-lightbox-meta") || "";
 
-        lightbox.classList.remove("hidden");
-        lightbox.classList.add("flex");
-        lightbox.setAttribute("aria-hidden", "false");
-      });
-    });
+      if (!src) return;
+
+      currentIndex = index;
+      lightboxImage.setAttribute("src", src);
+      lightboxImage.setAttribute("alt", alt);
+      lightboxCaption.textContent = title;
+      lightboxMeta.textContent = meta;
+
+      if (lightboxCounter) {
+        lightboxCounter.textContent = `${index + 1} / ${triggers.length}`;
+      }
+
+      lightbox.classList.remove("hidden");
+      lightbox.classList.add("flex");
+      lightbox.setAttribute("aria-hidden", "false");
+    }
+
+    function showNext() {
+      if (triggers.length === 0) return;
+      const nextIndex = (currentIndex + 1) % triggers.length;
+      showImage({ index: nextIndex });
+    }
+
+    function showPrev() {
+      if (triggers.length === 0) return;
+      const prevIndex = (currentIndex - 1 + triggers.length) % triggers.length;
+      showImage({ index: prevIndex });
+    }
 
     function closeLightbox() {
       if (!lightbox || !lightboxImage || !lightboxCaption || !lightboxMeta) return;
@@ -225,16 +270,34 @@ const descriptionBlocks =
       lightboxImage.setAttribute("alt", "");
       lightboxCaption.textContent = "";
       lightboxMeta.textContent = "";
+
+      if (lightboxCounter) {
+        lightboxCounter.textContent = "";
+      }
     }
 
+    triggers.forEach((trigger, index) => {
+      trigger.addEventListener("click", () => {
+        showImage({ index });
+      });
+    });
+
     closeButton?.addEventListener("click", closeLightbox);
+    nextButton?.addEventListener("click", showNext);
+    prevButton?.addEventListener("click", showPrev);
 
     lightbox?.addEventListener("click", (event) => {
       if (event.target === lightbox) closeLightbox();
     });
 
     document.addEventListener("keydown", (event) => {
+      const isOpen = lightbox?.getAttribute("aria-hidden") === "false";
+
+      if (!isOpen) return;
+
       if (event.key === "Escape") closeLightbox();
+      if (event.key === "ArrowRight") showNext();
+      if (event.key === "ArrowLeft") showPrev();
     });
   </script>
 </Layout>

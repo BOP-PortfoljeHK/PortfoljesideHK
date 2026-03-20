@@ -1,110 +1,86 @@
-import { defineField, defineType } from "sanity";
+import {defineField, defineType} from 'sanity'
 
 export default defineType({
-  name: "work",
-  title: "Work",
-  type: "document",
+  name: 'work',
+  title: 'Work',
+  type: 'document',
   fields: [
     defineField({
-      name: "title",
-      title: "Tittel",
-      type: "string",
+      name: 'title',
+      title: 'Title',
+      type: 'string',
       validation: (Rule) => Rule.required(),
     }),
-
     defineField({
-      name: "slug",
-      title: "Slug (URL)",
-      type: "slug",
-      options: { source: "title", maxLength: 96 },
-      validation: (Rule) => Rule.required(),
-    }),
-
-    defineField({
-      name: "category",
-      title: "Category",
-      type: "reference",
-      to: [{ type: "category" }],
-      validation: (Rule) => Rule.required(),
-    }),
-
-    defineField({
-      name: "series",
-      title: "Serie",
-      type: "reference",
-      to: [{ type: "series" }],
-      validation: (Rule) => Rule.required(),
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
       options: {
-        filter: ({ document }) => {
-          const categoryRef = (document as any)?.category?._ref;
-
-          if (!categoryRef) {
-            return { filter: "false" };
-          }
-
-          return {
-            filter: "category._ref == $categoryRef",
-            params: { categoryRef },
-          };
-        },
+        source: 'title',
+        maxLength: 96,
       },
-      description: "Velg kategori først, så får du riktig serie-liste.",
+      validation: (Rule) => Rule.required(),
     }),
-
     defineField({
-      name: "year",
-      title: "År",
-      type: "number",
+      name: 'category',
+      title: 'Category',
+      type: 'reference',
+      to: [{type: 'category'}],
+      validation: (Rule) => Rule.required(),
     }),
-
     defineField({
-      name: "medium",
-      title: "Medium",
-      type: "string",
-      description: 'F.eks. "Oil on canvas", "Bronze", "Acrylic on paper".',
+      name: 'year',
+      title: 'Year',
+      type: 'number',
     }),
-
     defineField({
-      name: "dimensions",
-      title: "Dimensjoner",
-      type: "string",
-      description: 'F.eks. "80×100 cm".',
+      name: 'medium',
+      title: 'Medium',
+      type: 'string',
     }),
-
     defineField({
-      name: "images",
-      title: "Bilder",
-      type: "array",
-      of: [
-        {
-          type: "image",
-          options: { hotspot: true },
-          fields: [
-            defineField({
-              name: "alt",
-              title: "Alt-tekst",
-              type: "string",
-              description: "Kort beskrivelse av bildet (valgfritt).",
-            }),
-          ],
-        },
+      name: 'dimensions',
+      title: 'Dimensions',
+      type: 'string',
+    }),
+    defineField({
+      name: 'availability',
+      title: 'Availability',
+      type: 'string',
+    }),
+    defineField({
+      name: 'image',
+      title: 'Image',
+      type: 'image',
+      options: {hotspot: true},
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt-tekst',
+          type: 'string',
+        }),
       ],
-      validation: (Rule) => Rule.min(1).warning("Legg gjerne inn minst 1 bilde."),
+      validation: (Rule) => Rule.required(),
     }),
-
     defineField({
-      name: "description",
-      title: "Beskrivelse",
-      type: "array",
-      of: [{ type: "block" }],
+      name: 'description',
+      title: 'Description',
+      type: 'array',
+      of: [{type: 'block'}],
     }),
   ],
-
   preview: {
     select: {
-      title: "title",
-      subtitle: "category.title",
-      media: "images.0",
+      title: 'title',
+      media: 'image',
+      subtitle: 'medium',
+    },
+    prepare({title, media, subtitle}) {
+      return {
+        title: title || 'No title',
+        media,
+        subtitle: subtitle || 'Single work',
+      }
     },
   },
-});
+})

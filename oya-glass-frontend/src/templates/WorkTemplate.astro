@@ -4,24 +4,75 @@ import { urlFor } from "../lib/sanityImage";
 
 const { data } = Astro.props;
 
-const firstImage =
-  Array.isArray(data.images) && data.images.length > 0 ? data.images[0] : null;
+function normalizeMarks(children: any[] = []) {
+  return children.map((child: any) => {
+    const text = child.text ?? "";
+
+    if (child.marks?.includes("strong")) {
+      return { type: "strong", text };
+    }
+
+    if (child.marks?.includes("em")) {
+      return { type: "em", text };
+    }
+
+    return { type: "text", text };
+  });
+}
+
+const descriptionBlocks =
+  data?.description
+    ?.filter((block: any) => block._type === "block")
+    .map((block: any) => ({
+      style: block.style ?? "normal",
+      children: normalizeMarks(block.children ?? []),
+    })) ?? [];
+
+const imageAlt =
+  typeof data?.image?.alt === "string" && data.image.alt.trim().length > 0
+    ? data.image.alt
+    : data?.title ?? "Verk";
+
+const previewUrl = data?.image
+  ? urlFor(data.image).width(1800).fit("max").url()
+  : null;
+
+const zoomUrl = data?.image
+  ? urlFor(data.image).width(2600).fit("max").url()
+  : null;
+
+const meta = [data?.year, data?.medium, data?.dimensions]
+  .filter(Boolean)
+  .join(" · ");
 ---
 
 <Layout title={data.title}>
   <main class="mx-auto max-w-7xl px-6 py-12 md:px-10">
-    <section class="grid gap-10 lg:grid-cols-2">
+    <section class="grid gap-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] lg:items-start">
       <div>
-        {firstImage && (
-          <img
-            src={urlFor(firstImage).width(1400).height(1400).fit("crop").url()}
-            alt={firstImage.alt || data.title}
-            class="h-auto w-full rounded-2xl object-cover"
-          />
+        {previewUrl && zoomUrl && (
+          <figure class="group">
+            <button
+              type="button"
+              class="block w-full overflow-hidden rounded-2xl"
+              data-lightbox-image={zoomUrl}
+              data-lightbox-alt={imageAlt}
+              data-lightbox-title={data.title}
+              data-lightbox-meta={meta}
+              aria-label={`Åpne større bilde av ${data.title}`}
+            >
+              <img
+                src={previewUrl}
+                alt={imageAlt}
+                loading="eager"
+                class="w-full rounded-2xl object-cover shadow-sm transition duration-300 group-hover:scale-[1.01]"
+              />
+            </button>
+          </figure>
         )}
       </div>
 
-      <div>
+      <div class="lg:sticky lg:top-10">
         <p class="mb-3 text-sm uppercase tracking-[0.2em] text-neutral-500">
           Work
         </p>
@@ -30,19 +81,153 @@ const firstImage =
           {data.title}
         </h1>
 
-        <div class="space-y-2 text-neutral-700">
-          {data.year && <p><span class="font-medium">Year:</span> {data.year}</p>}
-          {data.medium && <p><span class="font-medium">Medium:</span> {data.medium}</p>}
-          {data.dimensions && <p><span class="font-medium">Dimensions:</span> {data.dimensions}</p>}
-          {data.availability && <p><span class="font-medium">Availability:</span> {data.availability}</p>}
-        </div>
+        {meta && (
+          <p class="mb-8 text-base leading-7 text-neutral-500">
+            {meta}
+          </p>
+        )}
 
-        {data.description && (
-          <div class="mt-8 prose max-w-none">
-            <p>{data.description}</p>
+        {descriptionBlocks.length > 0 && (
+          <div class="max-w-3xl space-y-5">
+            {descriptionBlocks.map((block: any) =>
+              block.style === "h2" ? (
+                <h2 class="text-2xl font-semibold text-neutral-900">
+                  {block.children.map((child: any) =>
+                    child.type === "strong" ? (
+                      <strong class="font-semibold text-neutral-900">{child.text}</strong>
+                    ) : child.type === "em" ? (
+                      <em class="italic">{child.text}</em>
+                    ) : (
+                      child.text
+                    )
+                  )}
+                </h2>
+              ) : block.style === "h3" ? (
+                <h3 class="text-xl font-semibold text-neutral-900">
+                  {block.children.map((child: any) =>
+                    child.type === "strong" ? (
+                      <strong class="font-semibold text-neutral-900">{child.text}</strong>
+                    ) : child.type === "em" ? (
+                      <em class="italic">{child.text}</em>
+                    ) : (
+                      child.text
+                    )
+                  )}
+                </h3>
+              ) : block.style === "blockquote" ? (
+                <blockquote class="border-l-4 border-neutral-300 pl-4 italic text-neutral-600">
+                  {block.children.map((child: any) =>
+                    child.type === "strong" ? (
+                      <strong class="font-semibold text-neutral-900">{child.text}</strong>
+                    ) : child.type === "em" ? (
+                      <em class="italic">{child.text}</em>
+                    ) : (
+                      child.text
+                    )
+                  )}
+                </blockquote>
+              ) : (
+                <p class="text-base leading-8 text-neutral-700">
+                  {block.children.map((child: any) =>
+                    child.type === "strong" ? (
+                      <strong class="font-semibold text-neutral-900">{child.text}</strong>
+                    ) : child.type === "em" ? (
+                      <em class="italic">{child.text}</em>
+                    ) : (
+                      child.text
+                    )
+                  )}
+                </p>
+              )
+            )}
           </div>
         )}
       </div>
     </section>
   </main>
+
+  <div
+    id="lightbox"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 p-4"
+    aria-hidden="true"
+  >
+    <button
+      id="lightbox-close"
+      type="button"
+      class="absolute right-4 top-4 rounded-full bg-white/10 px-4 py-2 text-sm text-white backdrop-blur"
+      aria-label="Lukk bildevisning"
+    >
+      Lukk
+    </button>
+
+    <div class="flex max-h-[90vh] max-w-[90vw] flex-col items-center">
+      <img
+        id="lightbox-image"
+        src=""
+        alt=""
+        class="max-h-[80vh] max-w-[90vw] object-contain"
+      />
+
+      <p
+        id="lightbox-caption"
+        class="mt-4 text-center text-base font-medium text-white"
+      ></p>
+
+      <p
+        id="lightbox-meta"
+        class="mt-1 text-center text-sm text-white/80"
+      ></p>
+    </div>
+  </div>
+
+  <script>
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImage = document.getElementById("lightbox-image");
+    const lightboxCaption = document.getElementById("lightbox-caption");
+    const lightboxMeta = document.getElementById("lightbox-meta");
+    const closeButton = document.getElementById("lightbox-close");
+    const triggers = document.querySelectorAll("[data-lightbox-image]");
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener("click", () => {
+        const src = trigger.getAttribute("data-lightbox-image");
+        const alt = trigger.getAttribute("data-lightbox-alt") || "";
+        const title = trigger.getAttribute("data-lightbox-title") || "";
+        const meta = trigger.getAttribute("data-lightbox-meta") || "";
+
+        if (!lightbox || !lightboxImage || !lightboxCaption || !lightboxMeta || !src) return;
+
+        lightboxImage.setAttribute("src", src);
+        lightboxImage.setAttribute("alt", alt);
+        lightboxCaption.textContent = title;
+        lightboxMeta.textContent = meta;
+
+        lightbox.classList.remove("hidden");
+        lightbox.classList.add("flex");
+        lightbox.setAttribute("aria-hidden", "false");
+      });
+    });
+
+    function closeLightbox() {
+      if (!lightbox || !lightboxImage || !lightboxCaption || !lightboxMeta) return;
+
+      lightbox.classList.add("hidden");
+      lightbox.classList.remove("flex");
+      lightbox.setAttribute("aria-hidden", "true");
+      lightboxImage.setAttribute("src", "");
+      lightboxImage.setAttribute("alt", "");
+      lightboxCaption.textContent = "";
+      lightboxMeta.textContent = "";
+    }
+
+    closeButton?.addEventListener("click", closeLightbox);
+
+    lightbox?.addEventListener("click", (event) => {
+      if (event.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeLightbox();
+    });
+  </script>
 </Layout>

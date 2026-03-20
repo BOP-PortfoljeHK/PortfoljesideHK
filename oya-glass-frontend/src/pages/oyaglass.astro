@@ -4,29 +4,94 @@ import groq from "groq";
 import { sanity } from "../lib/sanityClient";
 
 const oyaglass = await sanity.fetch(groq`
-    *[_type == "oyaglass"][0]{
-        title,
-        "portraitUrl": portrait.asset->url,
-        bio,
-        highlights
-    }
+  *[_type == "oyaglass"][0]{
+    title,
+    images[]{
+      asset->{
+        url
+      },
+      alt
+    },
+    bio
+  }
 `);
+
+function getText(children: any[] = []) {
+  return children.map((child: any) => child.text ?? "").join("");
+}
+
+const bioBlocks = oyaglass?.bio ?? [];
+
+const renderedBlocks: any[] = [];
+let currentList: string[] = [];
+
+for (const block of bioBlocks) {
+  const text = getText(block.children);
+
+  if (block.listItem === "bullet") {
+    currentList.push(text);
+  } else {
+    if (currentList.length > 0) {
+      renderedBlocks.push({
+        type: "list",
+        items: [...currentList],
+      });
+      currentList = [];
+    }
+
+    renderedBlocks.push({
+      type: block.style ?? "normal",
+      text,
+    });
+  }
+}
+
+if (currentList.length > 0) {
+  renderedBlocks.push({
+    type: "list",
+    items: [...currentList],
+  });
+}
 ---
 
-<Layout>
-    <h1>{oyaglass.title}</h1>
+<Layout title={oyaglass?.title}>
+  <section class="mx-auto max-w-5xl space-y-10 px-4 py-16">
+    <h1 class="text-4xl font-bold">{oyaglass?.title}</h1>
 
-    <img src={oyaglass.portraitUrl} alt={oyaglass.title} width=300 />
+    <div class="space-y-4 text-base leading-8 text-neutral-800">
+      {renderedBlocks.map((block: any) => {
+        if (block.type === "h2") {
+          return <h2 class="text-2xl font-semibold">{block.text}</h2>;
+        }
 
-    <div>
-        {oyaglass.bio?.map((block: any) => ( 
-            <p>{block.children[0].text}</p>
-        ))}
+        if (block.type === "h3") {
+          return <h3 class="text-xl font-semibold">{block.text}</h3>;
+        }
+
+        if (block.type === "list") {
+          return (
+            <ul class="list-disc space-y-1 pl-6">
+              {block.items.map((item: string) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          );
+        }
+
+        return <p>{block.text}</p>;
+      })}
     </div>
 
-    <ul class="list-disc list-outside ml-6 space-y-2">
-        {oyaglass.highlights?.map((item: string) => ( 
-            <li class="text-gray-700">{item}</li>
+    {oyaglass?.images?.length > 0 && (
+      <div class="grid gap-6 md:grid-cols-2">
+        {oyaglass.images.map((image: any) => (
+          <img
+            src={image?.asset?.url}
+            alt={image?.alt || oyaglass?.title || "Øya glass studio"}
+            class="w-full rounded-2xl object-cover"
+          />
         ))}
-    </ul>
+      </div>
+    )}
+  </section>
 </Layout>

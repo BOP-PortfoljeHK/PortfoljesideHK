@@ -7,43 +7,91 @@ const { data } = Astro.props;
 
 <Layout title={data.title}>
   <main class="mx-auto max-w-7xl px-6 py-12 md:px-10">
-    <section class="mb-12">
-     
+    <section class="mb-14">
       <h1 class="mb-6 text-4xl font-semibold tracking-tight md:text-5xl">
         {data.title}
       </h1>
 
-      {data.coverImage && (
+      {/* {data.coverImage && (
         <img
           src={urlFor(data.coverImage).width(1600).height(900).fit("crop").url()}
           alt={data.title}
           class="mb-6 h-auto w-full rounded-2xl object-cover"
         />
-      )}
+      )} */}
 
       {data.description && (
-        <p class="max-w-3xl text-base leading-7 text-neutral-700">
+        <p class="max-w-3xl text-base leading-8 text-neutral-700">
           {data.description}
         </p>
       )}
     </section>
 
     {data.series?.length > 0 && (
-      <section class="mb-12">
-        <h2 class="mb-4 text-2xl font-semibold">Series</h2>
-        <div class="grid gap-4 md:grid-cols-2">
+      <section class="mb-14">
+        <h2 class="mb-6 text-2xl font-semibold">Series</h2>
+
+        <div class="grid gap-8 md:grid-cols-2">
           {data.series.map((series: any) => (
             <a
               href={`/${data.slug}/${series.slug}`}
-              class="rounded-2xl border border-neutral-200 p-5 transition hover:-translate-y-0.5 hover:shadow-sm"
+              class="group block"
             >
-              <h3 class="text-lg font-medium">{series.title}</h3>
+              {series.image && (
+                <img
+                  src={urlFor(series.image).width(1200).height(900).fit("crop").url()}
+                  alt={series.title}
+                  class="mb-4 aspect-4/3 w-full rounded-2xl object-cover shadow-sm transition duration-300 group-hover:scale-[1.01]"
+                />
+              )}
+
+              <div>
+                <h3 class="text-lg font-medium text-neutral-900">{series.title}</h3>
+
+                {series.year && (
+                  <p class="mt-1 text-sm text-neutral-500">{series.year}</p>
+                )}
+              </div>
             </a>
           ))}
         </div>
       </section>
     )}
 
-    
+    {data.works?.length > 0 && (
+      <section>
+        <h2 class="mb-6 text-2xl font-semibold">Work</h2>
+
+        <div class="grid gap-8 md:grid-cols-2">
+          {data.works.map((work: any) => {
+            const meta = [work.year, work.medium, work.dimensions]
+              .filter(Boolean)
+              .join(" · ");
+
+            return (
+              <a
+                href={`/${data.slug}/${work.slug}`}
+                class="group block"
+              >
+                {work.image && (
+                  <img
+                    src={urlFor(work.image).width(1200).height(900).fit("crop").url()}
+                    alt={work.image?.alt || work.title}
+                    class="mb-4 aspect-4/3 w-full rounded-2xl object-cover shadow-sm transition duration-300 group-hover:scale-[1.01]"
+                  />
+                )}
+
+                <div>
+                  <h3 class="text-lg font-medium text-neutral-900">{work.title}</h3>
+                  {meta && (
+                    <p class="mt-1 text-sm text-neutral-500">{meta}</p>
+                  )}
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </section>
+    )}
   </main>
 </Layout>

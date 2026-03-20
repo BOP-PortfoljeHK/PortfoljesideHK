@@ -1,11 +1,13 @@
 ---
-// Egen fil for å kunne opprette dynamiske ruter, basert på input fra Sanity. 
-// Dynamiske sider: Category, Series og Work. Alle disse har en "slug" i Sanity, som vi bruker for å bygge URL-er. 
-// Koden i denne filen er skapt ved hjelp av AI (ChatGPT).
+// Egen fil for å kunne opprette dynamiske ruter, basert på input fra Sanity.
+// Dynamiske sider: Category, Series og Work.
+// Koden i denne filen er tilpasset en hybridmodell:
+// - Category = kategori-side
+// - Series = serie med innebygde verk i works[]
+// - Work = enkeltstående verk
 
 import groq from "groq";
 import { sanity } from "../lib/sanityClient";
-import Layout from "../layouts/Layout.astro";
 
 import CategoryTemplate from "../templates/CategoryTemplate.astro";
 import SeriesTemplate from "../templates/SeriesTemplate.astro";
@@ -17,12 +19,12 @@ import WorkTemplate from "../templates/WorkTemplate.astro";
 export async function getStaticPaths() {
   const query = groq`
   {
-    "categories": *[_type=="category" && defined(slug.current)]{
+    "categories": *[_type == "category" && defined(slug.current)]{
       "category": slug.current
     },
 
     "series": *[
-      _type=="series" &&
+      _type == "series" &&
       defined(slug.current) &&
       defined(category->slug.current)
     ]{
@@ -31,27 +33,29 @@ export async function getStaticPaths() {
     },
 
     "works": *[
-      _type=="work" &&
+      _type == "work" &&
       defined(slug.current) &&
       defined(category->slug.current)
     ]{
       "category": category->slug.current,
-      "seriesSlug": series->slug.current,
       "work": slug.current
     }
   }`;
 
-  const data = await sanity.fetch(query);
+  const routeData = await sanity.fetch(query);
 
-  const categoryPaths = (data?.categories ?? [])
+  const categoryPaths = (routeData?.categories ?? [])
     .map((c: any) => c?.category)
-    .filter((v: any) => typeof v === "string" && v.length > 0)
+    .filter((value: any) => typeof value === "string" && value.length > 0)
     .map((category: string) => ({
       params: { slug: category },
     }));
 
-  const seriesPaths = (data?.series ?? [])
-    .map((s: any) => ({ category: s?.category, series: s?.series }))
+  const seriesPaths = (routeData?.series ?? [])
+    .map((s: any) => ({
+      category: s?.category,
+      series: s?.series,
+    }))
     .filter(
       (s: any) =>
         typeof s.category === "string" &&
@@ -60,13 +64,12 @@ export async function getStaticPaths() {
         s.series.length > 0
     )
     .map((s: any) => ({
-      params: { slug: `${s.category}/${s.series}` }, 
+      params: { slug: `${s.category}/${s.series}` },
     }));
 
-  const workPaths = (data?.works ?? [])
+  const workPaths = (routeData?.works ?? [])
     .map((w: any) => ({
       category: w?.category,
-      seriesSlug: w?.seriesSlug,
       work: w?.work,
     }))
     .filter(
@@ -76,13 +79,9 @@ export async function getStaticPaths() {
         typeof w.work === "string" &&
         w.work.length > 0
     )
-    .map((w: any) => {
-      if (typeof w.seriesSlug === "string" && w.seriesSlug.length > 0) {
-        return { params: { slug: `${w.category}/${w.seriesSlug}/${w.work}` } }; 
-      }
-      // fallback: work uten serie → /{category}/{work}
-      return { params: { slug: `${w.category}/${w.work}` } }; 
-    });
+    .map((w: any) => ({
+      params: { slug: `${w.category}/${w.work}` },
+    }));
 
   return [...categoryPaths, ...seriesPaths, ...workPaths];
 }
@@ -95,7 +94,7 @@ const segments = typeof slugStr === "string" ? slugStr.split("/") : [];
  * -------- */
 
 const len = segments.length;
-const [categorySlug, second, third] = segments;
+const [categorySlug, second] = segments;
 
 let pageType: "category" | "series" | "work" | null = null;
 let data: any = null;
@@ -105,77 +104,104 @@ if (len === 1) {
   pageType = "category";
   data = await sanity.fetch(
     groq`
-    *[_type=="category" && slug.current==$category][0]{
+    *[_type == "category" && slug.current == $category][0]{
       _id,
       title,
       "slug": slug.current,
       description,
       coverImage,
-      "series": *[_type=="series" && category._ref==^._id] | order(title asc){
-        _id, title, "slug": slug.current, coverImage
+
+      "series": *[
+        _type == "series" &&
+        category._ref == ^._id
+      ] | order(coalesce(year, 0) desc, title asc){
+        _id,
+        title,
+        "slug": slug.current,
+        year,
+        "image": coalesce(
+          coverImage,
+          works[0].image
+        )
       },
-      "works": *[_type=="work" && series._ref==^._id] | order(coalesce(year, 0) desc, _createdAt desc){
+
+      "works": *[
+        _type == "work" &&
+        category._ref == ^._id
+      ] | order(coalesce(year, 0) desc, _createdAt desc){
         _id,
         title,
         "slug": slug.current,
         year,
         medium,
         dimensions,
-        images
+        image{
+          ...,
+          alt
+        }
       }
     }`,
     { category: categorySlug }
   );
 }
 
-// /{category}/{series}  (eller fallback /{category}/{work} uten serie)
+// /{category}/{series} eller /{category}/{work}
 else if (len === 2) {
   // Prøv SERIES først
   const seriesData = await sanity.fetch(
-  groq`
-  *[_type=="series" &&
-    slug.current==$series &&
-    category->slug.current==$category
-  ][0]{
-    _id,
-    title,
-    "slug": slug.current,
-    description,
-    coverImage,
-    category->{_id, title, "slug": slug.current},
-    "works": *[_type=="work" && series._ref==^._id] | order(coalesce(year, 0) desc, _createdAt desc){
+    groq`
+    *[
+      _type == "series" &&
+      slug.current == $series &&
+      category->slug.current == $category
+    ][0]{
       _id,
+      _type,
       title,
       "slug": slug.current,
       year,
-      medium,
-      dimensions,
-      images
-    }
-  }`,
-  { category: categorySlug, series: second }
-);
+      description,
+      coverImage,
+      category->{_id, title, "slug": slug.current},
+      works[]{
+        title,
+        year,
+        medium,
+        dimensions,
+        image{
+          ...,
+          alt
+        },
+        description
+      }
+    }`,
+    { category: categorySlug, series: second }
+  );
 
   if (seriesData) {
     pageType = "series";
     data = seriesData;
   } else {
-    // Fallback: WORK uten serie
+    // Fallback: WORK
     const workData = await sanity.fetch(
       groq`
-      *[_type=="work" &&
-        slug.current==$work &&
-        category->slug.current==$category &&
-        !defined(series)
+      *[
+        _type == "work" &&
+        slug.current == $work &&
+        category->slug.current == $category
       ][0]{
         _id,
+        _type,
         title,
         "slug": slug.current,
         year,
         medium,
         dimensions,
         availability,
-        images,
+        image{
+          ...,
+          alt
+        },
         description,
         category->{title, "slug": slug.current}
       }`,
@@ -189,46 +215,17 @@ else if (len === 2) {
   }
 }
 
-// /{category}/{series}/{work}
-else if (len === 3) {
-  pageType = "work";
-  data = await sanity.fetch(
-    groq`
-    *[_type=="work" &&
-      slug.current==$work &&
-      category->slug.current==$category &&
-      series->slug.current==$series
-    ][0]{
-      _id,
-      title,
-      "slug": slug.current,
-      year,
-      medium,
-      dimensions,
-      availability,
-      images,
-      description,
-      category->{title, "slug": slug.current},
-      series->{title, "slug": slug.current}
-    }`,
-    { category: categorySlug, series: second, work: third }
-  );
-}
-
 // 404 hvis ingen data
 if (!data || !pageType) {
   Astro.response.status = 404;
 }
 ---
 
-
 {Astro.response.status === 404 ? (
-  
   <main style="padding:2rem">
     <h1>404</h1>
     <p>Siden finnes ikke.</p>
   </main>
-  
 ) : (
   <>
     {pageType === "category" && <CategoryTemplate data={data} />}
