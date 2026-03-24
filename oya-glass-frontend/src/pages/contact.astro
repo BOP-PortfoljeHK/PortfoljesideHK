@@ -1,8 +1,96 @@
 ---
 import Layout from "../layouts/Layout.astro";
----
+import groq from "groq";
+import { sanity } from "../lib/sanityClient";
 
+const contact = await sanity.fetch(groq`
+    *[_type == "contact"][0]{
+        title,
+        intro,
+        contact{
+            name,
+            email,
+            phone,
+            socialLinks
+        },
+        form
+    }
+    `);
+---
+  
 <Layout>
-    <h1 class="text-4xl text-blue-600 font-bold">Her kommer kontaktinformasjonen til Hanna</h1>
-    <p>Kanskje vil det komme bilder o.l:)</p>
+    <section class="px-6 py-12 md:px-10">
+        <div class="max-w-5xl">
+
+            <div class="mt-10 grid grid-cols-2 gap-10">
+
+            <!-- Venstre side -->
+            <div class="space-y-8">
+                <div>
+                    <h1 class="text-5xl font-semibold">
+                        {contact?.title}
+                    </h1>
+                    <div class="mt-6 h-px w-40 bg-black"></div>    
+                </div>
+                
+                <div class="space-y-5 text-lg">
+                    <div>
+                        <p class="text-sm uppercase tracking-wide text-gray-500">Navn</p>
+                        <p class="mt-1"></p>{contact?.contact?.name}</p>
+                    </div>
+
+                    <div>
+                        <p class="text-sm uppercase tracking-wide text-gray-500">E-post</p>
+                        <p class="mt-1"></p>{contact?.contact?.email}</p>
+                    </div>
+
+                    <div>
+                        <p class="text-sm uppercase tracking-wide text-gray-500">Telefon</p>
+                        <p class="mt-1"></p>{contact?.contact?.phone}</p>
+                    </div>
+                </div>
+             
+
+                <div class="pt-6">
+                    <h2 class="text-sm uppercase tracking-wide text-gray-500 mb-2">
+                        Følg meg
+                    </h2>
+
+                <div class="pt-6 flex gap-4">
+                    {contact?.contact?.socialLinks?.map((link: any) => (
+                        <a 
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={`Follow on ${link.label}`}
+                            class="transition-all duration-200 hover:scale-110 hover:opacity-70"
+                            >
+
+                        {link.label === "Instagram" && (
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M7 2C4.2 2 2 4.2 2 7v10c0 2.8 2.2 5 5 5h10c2.8 0 5-2.2 5-5V7c0-2.8-2.2-5-5-5H7zm5 5a5 5 0 110 10 5 5 0 010-10zm6.5-.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM12 9a3 3 0 100 6 3 3 0 000-6z"/>
+                            </svg>
+                        )} 
+
+                        {link.label === "Facebook" && (
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M22 12a10 10 0 10-11.5 9.9v-7H7v-2.9h3.5V9.8c0-3.4 2-5.3 5-5.3 1.5 0 3 .3 3 .3v3.3h-1.7c-1.7 0-2.3 1.1-2.3 2.2v2.7H18l-.5 2.9h-3v7A10 10 0 0022 12z"/>
+                            </svg>
+                        )}           
+                        </a>
+                    ))}
+                </div>
+            </div> 
+     
+        </div>  
+
+            <!-- Høyre side -->
+             <div class="bg-gray-100 p-6 rounded-lg">
+                <p> Her kommer kontaktskjema</p>
+             </div>
+            
+            </div>
+
+        </div>
+    </section>
 </Layout>
