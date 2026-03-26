@@ -26,6 +26,13 @@ export default defineType({
       type: "object",
       fields: [
         defineField({
+          name: "name",
+          title: "Navn",
+          type: "string",
+          validation: (Rule) => Rule.required(),
+        }),
+    
+      defineField({
           name: "email",
           title: "E-post",
           type: "string",
@@ -37,6 +44,12 @@ export default defineType({
                 : "Ugyldig e-postadresse";
             }),
         }),
+
+      defineField({
+        name: "phone",
+        title: "Telefon",
+        type: "string",
+      }),  
 
         defineField({
           name: "socialLinks",
@@ -75,8 +88,16 @@ export default defineType({
         "Hvis dere har skjema i frontend, kan dere styre tekst/labels her.",
       type: "object",
       fields: [
-        defineField({ name: "enabled", title: "Aktivert", type: "boolean" }),
-        defineField({ name: "submitLabel", title: "Knappetekst", type: "string" }),
+        defineField({ 
+          name: "enabled", 
+          title: "Aktivert", 
+          type: "boolean" 
+        }),
+        defineField({ 
+          name: "submitLabel", 
+          title: "Knappetekst", 
+          type: "string" 
+        }),
         defineField({
           name: "successMessage",
           title: "Suksessmelding",
@@ -84,7 +105,7 @@ export default defineType({
         }),
       ],
     }),
-  ],
+  ],  
 
   preview: {
     prepare() {
