@@ -20,16 +20,11 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "description",
-      title: "Beskrivelse",
-      type: "text",
-      rows: 3,
-    }),
-    defineField({
       name: "coverImage",
       title: "Cover-bilde",
       type: "image",
       options: { hotspot: true },
+      validation: (Rule) => Rule.required(),
     }),
   ],
   preview: {
