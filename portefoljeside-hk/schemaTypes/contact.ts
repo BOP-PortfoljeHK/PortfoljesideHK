@@ -1,5 +1,7 @@
 import { defineField, defineType } from "sanity";
 
+{/* Schema for kontaktsiden, inkludert introtekst, kontaktinfo (navn, e-post, telefon, sosiale lenker) og valgfritt kontaktskjema. */}
+
 export default defineType({
   name: "contact",
   title: "Contact",

@@ -83,12 +83,12 @@ if (currentList.length > 0) {
     </div>
 
     {oyaglass?.images?.length > 0 && (
-      <div class="grid gap-6 md:grid-cols-2">
+      <div class="mx-auto max-w-5xl grid gap-6 md:grid-cols-2">
         {oyaglass.images.map((image: any) => (
           <img
             src={image?.asset?.url}
             alt={image?.alt || oyaglass?.title || "Øya glass studio"}
-            class="w-full rounded-2xl object-cover"
+            class="aspect-4/3 w-full object-cover"
           />
         ))}
       </div>

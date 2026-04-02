@@ -3,46 +3,58 @@ import Layout from "../layouts/Layout.astro";
 import { urlFor } from "../lib/sanityImage";
 
 const { data } = Astro.props;
+
+const seriesGridClass =
+  data.series?.length > 1
+    ? "grid grid-cols-1 gap-y-12 md:grid-cols-2 md:gap-x-8 md:gap-y-14"
+    : "grid grid-cols-1 max-w-3xl";
+
+const worksGridClass =
+  data.works?.length > 1
+    ? "grid grid-cols-1 gap-y-12 md:grid-cols-2 md:gap-x-8 md:gap-y-14"
+    : "grid grid-cols-1 max-w-3xl";
 ---
 
+{/* Denne siden viser innholdet for en spesifikk kategori, via slug fra Sanity */}
+
 <Layout title={data.title}>
-  <main class="mx-auto max-w-[1700px] px-6 py-14 md:px-10 md:py-20">
-    <section class="mb-14 md:mb-18">
-      <h1 class="text-3xl sm:text-4xl md:text-4xl font-medium leading-tight tracking-tight text-neutral-950">
+  <main class="mx-auto w-full max-w-350 py-16 md:px-10 md:py-24 lg:px-14">
+    <section class="mb-16 md:mb-24">
+      <h1 class="text-4xl font-medium leading-none tracking-tight text-neutral-950 sm:text-5xl md:text-6xl">
         {data.title}
       </h1>
 
       {data.description && (
-        <p class="mt-4 max-w-2xl text-base leading-7 text-neutral-600">
+        <p class="mt-6 max-w-3xl text-base leading-8 text-neutral-600 md:text-lg">
           {data.description}
         </p>
       )}
     </section>
 
     {data.series?.length > 0 && (
-      <section class="mb-16 md:mb-20">
-        <h2 class="mb-6 text-xs font-medium uppercase tracking-[0.22em] text-neutral-500 md:mb-8">
+      <section class="mb-20 md:mb-28">
+        <h2 class="mb-8 text-[0.68rem] font-medium uppercase tracking-[0.28em] text-neutral-500 md:mb-10">
           Series
         </h2>
 
-        <div class="grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 md:gap-y-14">
+        <div class={seriesGridClass}>
           {data.series.map((series: any) => (
             <a
               href={`/${data.slug}/${series.slug}`}
               class="group block"
             >
               {series.image && (
-                <div class="overflow-hidden rounded-[1.5rem] bg-neutral-200 md:rounded-[1.75rem]">
+                <div class="overflow-hidden bg-neutral-200">
                   <img
-                    src={urlFor(series.image).width(2200).height(1650).fit("crop").url()}
+                    src={urlFor(series.image).width(2800).height(1800).fit("crop").url()}
                     alt={series.title}
-                    class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-[1.015]"
+                    class="aspect-16/10 w-full object-cover transition duration-700 ease-out group-hover:scale-[1.02]"
                   />
                 </div>
               )}
 
-              <div class="mt-3 md:mt-4">
-                <h3 class="text-2xl sm:text-3xl md:text-[1.85rem] font-medium leading-tight tracking-tight text-neutral-950">
+              <div class="mt-4 md:mt-5">
+                <h3 class="text-2xl font-medium leading-tight tracking-tight text-neutral-950 sm:text-3xl md:text-[2.2rem]">
                   {series.title}
                 </h3>
               </div>
@@ -54,28 +66,28 @@ const { data } = Astro.props;
 
     {data.works?.length > 0 && (
       <section>
-        <h2 class="mb-6 text-xs font-medium uppercase tracking-[0.22em] text-neutral-500 md:mb-8">
+        <h2 class="mb-8 text-[0.68rem] font-medium uppercase tracking-[0.28em] text-neutral-500 md:mb-10">
           Works
         </h2>
 
-        <div class="grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 md:gap-y-14">
+        <div class={worksGridClass}>
           {data.works.map((work: any) => (
             <a
               href={`/${data.slug}/${work.slug}`}
               class="group block"
             >
               {work.image && (
-                <div class="overflow-hidden rounded-[1.5rem] bg-neutral-200 md:rounded-[1.75rem]">
+                <div class="overflow-hidden bg-neutral-200">
                   <img
-                    src={urlFor(work.image).width(2200).height(1650).fit("crop").url()}
+                    src={urlFor(work.image).width(2800).height(1800).fit("crop").url()}
                     alt={work.image?.alt || work.title}
-                    class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-[1.015]"
+                    class="aspect-16/10 w-full object-cover transition duration-700 ease-out group-hover:scale-[1.02]"
                   />
                 </div>
               )}
 
-              <div class="mt-3 md:mt-4">
-                <h3 class="text-2xl sm:text-3xl md:text-[1.85rem] font-medium leading-tight tracking-tight text-neutral-950">
+              <div class="mt-4 md:mt-5">
+                <h3 class="text-2xl font-medium leading-tight tracking-tight text-neutral-950 sm:text-3xl md:text-[2.2rem]">
                   {work.title}
                 </h3>
               </div>

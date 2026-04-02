@@ -1,5 +1,7 @@
 import { defineField, defineType } from "sanity";
 
+{/* Eget schema for forsiden, med et felt for å kunne laste opp et bakgrunnsbilde. */ }
+
 export default defineType({
   name: "homePage",
   title: "Home page",

@@ -1,5 +1,7 @@
 import { defineField, defineType } from "sanity";
 
+{/* Schema for "Øya glass studio"-seksjonen, med felt for tittel, bilder og biografi. */ }
+
 export default defineType({
   name: "oyaglass",
   title: "Øya glass studio",

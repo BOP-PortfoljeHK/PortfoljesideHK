@@ -46,6 +46,9 @@ const meta = [data?.year, data?.medium, data?.dimensions]
   .join(" · ");
 ---
 
+{/* "Mal-side" for å vise enkeltverk basert på slug fra Sanity */}
+
+
 <Layout title={data.title}>
   <main class="mx-auto max-w-7xl px-6 py-12 md:px-10">
     <section class="grid gap-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] lg:items-start">
@@ -54,7 +57,7 @@ const meta = [data?.year, data?.medium, data?.dimensions]
           <figure class="group">
             <button
               type="button"
-              class="block w-full overflow-hidden rounded-2xl"
+              class="block w-full overflow-hidden"
               data-lightbox-image={zoomUrl}
               data-lightbox-alt={imageAlt}
               data-lightbox-title={data.title}
@@ -65,7 +68,7 @@ const meta = [data?.year, data?.medium, data?.dimensions]
                 src={previewUrl}
                 alt={imageAlt}
                 loading="eager"
-                class="w-full rounded-2xl object-cover shadow-sm transition duration-300 group-hover:scale-[1.01]"
+                class="w-full object-cover shadow-sm transition duration-300 group-hover:scale-[1.01]"
               />
             </button>
           </figure>
@@ -146,6 +149,8 @@ const meta = [data?.year, data?.medium, data?.dimensions]
     </section>
   </main>
 
+
+  { /* Lightbox for å vise større versjon av bildet */}
   <div
     id="lightbox"
     class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 p-4"
@@ -157,7 +162,7 @@ const meta = [data?.year, data?.medium, data?.dimensions]
       class="absolute right-4 top-4 rounded-full bg-white/10 px-4 py-2 text-sm text-white backdrop-blur"
       aria-label="Close"
     >
-      Lukk
+      Close
     </button>
 
     <div class="flex max-h-[90vh] max-w-[90vw] flex-col items-center">
@@ -180,6 +185,7 @@ const meta = [data?.year, data?.medium, data?.dimensions]
     </div>
   </div>
 
+  {/* JavaScript for å håndtere lightbox-funksjonalitet */}
   <script>
     const lightbox = document.getElementById("lightbox");
     const lightboxImage = document.getElementById("lightbox-image");

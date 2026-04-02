@@ -1,6 +1,8 @@
 
 import { defineField, defineType } from "sanity";
 
+{/* Schema for å opprette kategori via slug */ }
+
 export default defineType({
   name: "category",
   title: "Category",

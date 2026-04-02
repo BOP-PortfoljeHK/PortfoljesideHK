@@ -42,9 +42,13 @@ const descriptionBlocks =
     })) ?? [];
 ---
 
+{/* Denne siden viser innholdet for en spesifikk serie, via slug fra Sanity.
+Eks. når bruker klikker på en serie i kategorisiden. */}
+
+
 <Layout title={data.title}>
-  <main class="mx-auto max-w-[1700px] px-6 py-14 md:px-10 md:py-20">
-    <section class="mx-auto mb-14 max-w-[860px] md:mb-18">
+  <main class="mx-auto max-w-425 px-6 py-14 md:px-10 md:py-20">
+    <section class="mx-auto mb-14 max-w-215 md:mb-18">
       <p class="mb-3 text-xs font-medium uppercase tracking-[0.22em] text-neutral-500">
         Series
       </p>
@@ -110,6 +114,8 @@ const descriptionBlocks =
       )}
     </section>
 
+    {/* viser alle verk i serien */}
+
     {galleryItems.length > 0 && (
       <section class="grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 md:gap-y-14">
         {galleryItems.map((item: any, index: number) => {
@@ -137,10 +143,11 @@ const descriptionBlocks =
                   src={previewUrl}
                   alt={item.alt}
                   loading="lazy"
-                  class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-[1.015]"
+                  class="aspect-4/3 w-full object-cover transition duration-500 group-hover:scale-[1.015]"
                 />
               </button>
 
+              {/* figcaption betyr beskrivelse for bildet */}
               <figcaption class="mt-3 md:mt-4">
                 <p class="text-xl font-medium leading-tight tracking-tight text-neutral-950 sm:text-2xl md:text-[1.85rem]">
                   {item.workTitle}
@@ -156,9 +163,11 @@ const descriptionBlocks =
     )}
   </main>
 
+
+  {/* Lightbox-komponenten for å vise større versjon av bildet når det klikkes */}
   <div
     id="lightbox"
-    class="fixed inset-0 z-[10000] hidden items-center justify-center bg-black/95 px-4 py-6"
+    class="fixed inset-0 z-10000 hidden items-center justify-center bg-black/95 px-4 py-6"
     aria-hidden="true"
   >
     <button
@@ -169,7 +178,7 @@ const descriptionBlocks =
       Close
     </button>
 
-    <div class="flex w-full max-w-[1400px] flex-col items-center">
+    <div class="flex w-full max-w-350 flex-col items-center">
       <img
         id="lightbox-image"
         src=""
@@ -215,6 +224,8 @@ const descriptionBlocks =
     </button>
   </div>
 
+
+  {/* Lightbox-skriptet for å håndtere åpning, lukking og navigering av bildene i lightboxen, JavaScript */}
   <script>
     const lightbox = document.getElementById("lightbox");
     const lightboxImage = document.getElementById("lightbox-image") as HTMLImageElement | null;
