@@ -4,6 +4,9 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 
 import { sanity } from "../lib/sanityClient";
+import { urlFor } from "../lib/sanityImage";
+
+const { backgroundImage } = Astro.props;
 
 const categories = await sanity.fetch(`
   *[_type == "category"] | order(title asc) {
@@ -11,27 +14,33 @@ const categories = await sanity.fetch(`
     "slug": slug.current
   }
 `);
----
 
+const backgroundUrl = backgroundImage
+  ? urlFor(backgroundImage).width(2000).fit("max").url()
+  : null;
+---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Hanna Karlsen</title>
-	</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Hanna Karlsen</title>
+  </head>
 
-	<body>
-		<div class="min-h-screen flex flex-col">
-			<Header categories={categories} />
+  <body
+    class="min-h-screen bg-cover bg-center bg-no-repeat"
+    style={backgroundUrl ? `background-image: url('${backgroundUrl}')` : ""}
+  >
+    <div class="min-h-screen flex flex-col">
+      <Header categories={categories} />
 
-			<main class="flex-1 pt-25">
-				<slot />
-			</main>
+      <main class="flex-1 pt-28 md:pt-30">
+        <slot />
+      </main>
 
-			<Footer />
-		</div>
-	</body>
+      <Footer />
+    </div>
+  </body>
 </html>

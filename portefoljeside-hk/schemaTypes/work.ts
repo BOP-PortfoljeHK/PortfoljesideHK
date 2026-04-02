@@ -1,5 +1,9 @@
 import {defineField, defineType} from 'sanity'
 
+{/* Definerer en Sanity-skjema for "work" eller enkeltarbeider (kunstverk) med ulike felt som tittel, 
+  kategori, år, medium, dimensjoner, tilgjengelighet, bilde og beskrivelse. Skjemaet inkluderer også en forhåndsvisning
+  av hvordan dokumentet skal vises i Sanity-studioet. */}
+
 export default defineType({
   name: 'work',
   title: 'Work',

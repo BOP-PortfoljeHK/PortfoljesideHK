@@ -1,5 +1,8 @@
 import { defineField, defineType } from "sanity";
 
+{/* Schema for oppretting av slug-side serier. Alle serier er knyttet opp mot en kategori og inneholder en liste med verk som tilhører serien. 
+  Blant annet navn, år, medium, dimensjoner, og bilde. */ }
+
 export default defineType({
   name: "series",
   title: "Series",

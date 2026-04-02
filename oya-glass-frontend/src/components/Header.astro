@@ -3,154 +3,146 @@ const currentPath = Astro.url.pathname;
 const { categories = [] } = Astro.props;
 ---
 
-<!-- HEADER - som skal ligge øvesrt på alle sidene -->
-<header class="fixed top-0 left-0 w-full z-9999 px-8 py-4 border-b border-gray-300 bg-[#c2b1a4]">
+<header id="site-header" class="fixed top-0 left-0 w-full z-9999 px-8 py-6 bg-[#c2b1a4]/95 backdrop-blur-lg transition-transform duration-300">
+  <div class="w-full px-8">
+    <nav class="flex items-center justify-between">
+      <a
+        href="/"
+        class="text-[2rem] text-black no-underline tracking-tight hover:opacity-80 transition"
+      >
+        Hanna Karlsen
+      </a>
 
-    <div class="w-full px-8">
-        <nav class="flex items-center justify-between">
+      {/* Desktop meny */}
+      <button id="menu-toggle" class="md:hidden flex flex-col justify-center items-center w-10 h-10">
+        <span class="line block w-6 h-0.5 bg-black mb-1 transition duration-300"></span>
+        <span class="line block w-6 h-0.5 bg-black mb-1 transition duration-300"></span>
+        <span class="line block w-6 h-0.5 bg-black transition duration-300"></span>
+      </button>
 
-            <!-- Logoen/navnet til eier -->
-            <a href="/" class="font-bold text-[1.2rem] text-black no-underline">
-            Hanna K
-            </a>
+      {/* Viser dynamisk meny for kategorier, slug-sider */}
+      <div class="hidden md:flex items-center space-x-8 ml-auto">
+        <div class="relative group">
+          <a
+            href="/work"
+            class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:opacity-70 ${
+              currentPath === "/work" ||
+              categories.some((category: { slug: any }) => currentPath === `/${category.slug}`)
+                ? "underline"
+                : ""
+            }`}
+          >
+            Work
+          </a>
 
-            <!-- Hamburgermeny, som kun skal vises på mindre skjermer/monil -->
-             <button id="menu-toggle" class="md:hidden flex flex-col justify-center items-center w-8 h-8">
-                <span class="line block w-6 h-0.5 bg-black mb-1"></span>
-                <span class="line block w-6 h-0.5 bg-black mb-1"></span>
-                <span class="line block w-6 h-0.5 bg-black"></span>
-             </button>
-
-             <!-- Desktop-meny, som er skjult på mobil -->
-            <div class="hidden md:flex space-x-6 ml-auto">
-
-                <!-- gammel Work -->
-                <!-- WORK med dropdownMeny -->
-                <!-- <div class="relative group">
-                    <a href="/work" class={`text-black font-medium no-underline ${
-                        currentPath === "/work" ||
-                        currentPath === "/applied-arts" ||
-                        currentPath === "/jewelry-collections" ||
-                        currentPath === "/sculptural"
-                            ? "underline" 
-                            : ""
-                            }`}>
-                        Work
-                    </a>
-
-                    <!-- Dropdown, som vises ved hover på work
-                    <div class="absolute left-0 top-full hidden group-hover:block hover:block bg-[#c2b1a4] text-black px-6 py-4 min-w-[220px] shadow-lg z-[9999]">
-
-                        <a href="/applied-arts"
-                        class={`block py-1 ${currentPath === "/applied-arts" ? "underline" : "hover:underline"}`}>
-                            Applied arts
-                        </a>
-
-                        <a href="/jewelry-collections"
-                        class={`block py-1 ${currentPath === "/jewelry-collections" ? "underline" : "hover:underline"}`}>
-                            Jewelry collections
-                        </a>
-
-                        <a href="/sculptural"
-                        class={`block py-1 ${currentPath === "/sculptural" ? "underline" : "hover:underline"}`}>
-                            Sculptural
-                        </a>
-                    </div>
-                </div> -->
-
-                <!-- WORK med dropdownMeny som fungerer dynamisk, ettersom det er en liste over kategorier -->
-                <div class="relative group">
-                    <a href="/work" class={`text-black font-medium no-underline ${
-                        currentPath === "/work" ||
-                        categories.some((category: { slug: any; }) => currentPath === `/${category.slug}`)
-                            ? "underline"
-                            : ""
-                    }`}>
-                        Work
-                    </a>
-
-                    <!-- Dropdown, som vises ved hover på work -->
-                    <div class="absolute left-0 top-full hidden group-hover:block hover:block bg-[#c2b1a4] text-black px-6 py-4 min-w-55 shadow-lg z-9999">
-                        {categories.map((category: { slug: any; title: unknown; }) => (
-                            <a
-                                href={`/${category.slug}`}
-                                class={`block py-1 ${
-                                    currentPath === `/${category.slug}`
-                                        ? "underline"
-                                        : "hover:underline"
-                                }`}
-                            >
-                                {category.title}
-                            </a>
-                        ))}
-                    </div>
-                </div>
-                
-
-                <!-- Vanlige meny-lenker -->
-                <a href="/oyaglass" class={`text-black font-medium no-underline ${currentPath === "/oyaglass" ? "underline" : ""}`}>
-                    Øya glass studio
-                </a>
-
-                <a href="/about" class={`text-black font-medium no-underline ${currentPath === "/about" ? "underline" : ""}`}>
-                    About
-                </a>
-
-                <a href="/contact" class={`text-black font-medium no-underline ${currentPath === "/contact" ? "underline" : ""}`}>
-                    Contact
-                </a>
-            </div>
-        </nav>
-    </div>
-    
-    <!-- MobilMeny - hamburgermeny -->
-    <nav id="mobile-menu" class="hidden md:hidden absolute right-8 top-full mt-2 bg-[#c2b1a4] px-6 py-4 shadow-lg">
-        <div class="flex flex-col space-y-3">
-
-            <!-- Gamle statiske Work-lenker -->
-            <!-- <a href="/work" class="text-black no-underline">Work</a>
-
-            <a href="/applied-arts" class="text-black no-underline pl-4">Applied arts</a>
-            <a href="/jewelry-collections" class="text-black no-underline pl-4">Jewelry collections</a>
-            <a href="/sculptural" class="text-black no-underline pl-4">Sculptural</a> -->
-
-            <!-- Dynamiske Work-lenker, som genereres utifra kategoriene i Sanity -->
-            <a href="/work" class="text-black hover:underline">Work</a>
-
-            {categories.map((category: { slug: any; title: unknown; }) => (
-                <a
-                    href={`/${category.slug}`}
-                    class="text-black hover:underline pl-4"
-                >
-                    {category.title}
-                </a>
+          <div class="absolute left-0 top-full hidden group-hover:block hover:block bg-[#c2b1a4] text-black px-6 py-4 min-w-55 shadow-lg z-9999">
+            {categories.map((category: { slug: any; title: unknown }) => (
+              <a
+                href={`/${category.slug}`}
+                class={`block py-1 text-base no-underline transition hover:opacity-70 ${
+                  currentPath === `/${category.slug}`
+                    ? "underline"
+                    : "hover:underline"
+                }`}
+              >
+                {category.title}
+              </a>
             ))}
-
-            <a href="/oyaglass" class="text-black hover:underline">Øya glass studio</a>
-            <a href="/about" class="text-black hover:underline">About</a>
-            <a href="/contact" class="text-black hover:underline">Contact</a>
-
+          </div>
         </div>
+
+        {/* Statisk meny for "faste sider" */}
+        <a
+          href="/oyaglass"
+          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:opacity-70 ${
+            currentPath === "/oyaglass" ? "underline" : ""
+          }`}
+        >
+          Øya glass studio
+        </a>
+
+        <a
+          href="/about"
+          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:opacity-70 ${
+            currentPath === "/about" ? "underline" : ""
+          }`}
+        >
+          About
+        </a>
+
+        <a
+          href="/contact"
+          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:opacity-70 ${
+            currentPath === "/contact" ? "underline" : ""
+          }`}
+        >
+          Contact
+        </a>
+      </div>
     </nav>
+  </div>
+
+
+  {/* Mobilmeny */}
+ 
+  <nav id="mobile-menu" class="hidden md:hidden absolute right-8 top-full mt-2 bg-[#c2b1a4] px-6 py-4 shadow-lg">
+    <div class="flex flex-col space-y-3">
+      <a href="/work" class="text-black no-underline hover:underline transition">Work</a>
+
+      {categories.map((category: { slug: any; title: unknown }) => (
+        <a
+          href={`/${category.slug}`}
+          class="text-black no-underline hover:underline pl-4 transition hover:opacity-70"
+        >
+          {category.title}
+        </a>
+      ))}
+
+      <a href="/oyaglass" class="text-black no-underline hover:underline transition hover:opacity-70">Øya glass studio</a>
+      <a href="/about" class="text-black no-underline hover:underline transition hover:opacity-70">About</a>
+      <a href="/contact" class="text-black no-underline hover:underline transition hover:opacity-70">Contact</a>
+    </div>
+  </nav>
 </header>
 
-<!-- Åpner og lukker mobilmenyen -->
+
+{/* Script for å toggle mobilmeny, slik at den vises og skjules ved klikk */}
 <script>
-    const toggleButton = document.getElementById("menu-toggle");
-    const mobileMenu = document.getElementById("mobile-menu");
+  const toggleButton = document.getElementById("menu-toggle");
+  const mobileMenu = document.getElementById("mobile-menu");
 
-    toggleButton?.addEventListener("click", () => {
-        mobileMenu?.classList.toggle("hidden");
+  toggleButton?.addEventListener("click", () => {
+    mobileMenu?.classList.toggle("hidden");
 
-        /* Lukker meny med kryss */
-        const lines = toggleButton.querySelectorAll(".line");
+    const lines = toggleButton.querySelectorAll(".line");
 
-        lines[0].classList.toggle("rotate-45");
-        lines[0].classList.toggle("translate-y-1.5");
+    lines[0].classList.toggle("rotate-45");
+    lines[0].classList.toggle("translate-y-1.5");
 
-        lines[1].classList.toggle("opacity-0");
+    lines[1].classList.toggle("opacity-0");
 
-        lines[2].classList.toggle("-rotate-45");
-        lines[2].classList.toggle("-translate-y-1.5");
-    });
+    lines[2].classList.toggle("-rotate-45");
+    lines[2].classList.toggle("-translate-y-1.5");
+  });
+
+  // Script for å skjule header ved scroll ned og vise den ved scroll opp
+  const header = document.getElementById("site-header");
+
+  let lastScrollY = window.scrollY;
+
+  window.addEventListener("scroll", () => {
+    const currentScrollY = window.scrollY;
+
+    if (!header) return;
+
+    if (currentScrollY > lastScrollY && currentScrollY > 80) {
+      // scroller ned → skjul
+      header.style.transform = "translateY(-100%)";
+    } else {
+      // scroller opp → vis
+      header.style.transform = "translateY(0)";
+    }
+
+    lastScrollY = currentScrollY;
+  });
 </script>

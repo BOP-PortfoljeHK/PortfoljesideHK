@@ -17,38 +17,43 @@ const about = await sanity.fetch(groq`
     
     <body class="bg-slate-950 text-white">
 
-        <section class="space-y-10 text-justify max-w-4xl mx-auto px-4 py-16">
+                <section class="mx-auto max-w-5xl px-4 py-16">
+                <div class="grid gap-10 md:grid-cols-[1fr_380px] md:gap-16 items-center">
 
-                <div>
-                    <img 
-                    src={about.portraitUrl} 
-                    alt="Artist portrait" 
-                    class="rounded-lg w-full max-w-sm mx-auto mb-8 object-cover"
-                    />
-                </div>
+                    {/* TEKST */}
+                    <div>
+                    <h1 class="text-4xl font-medium mb-6">{about.title}</h1>
 
-                <div>
-                    <h1 class="text-4xl font-bold mb-8">{about.title}</h1>
-
-                    <div class="space-y-4">
+                    <div class="space-y-4 text-base leading-8 text-neutral-800">
                         {about.bio.map((block: any) => (
-                            <p class="text-lg leading-relaxed text-neutral-900">
-                                {block.children[0].text}
-                            </p>
+                        <p>{block.children[0].text}</p>
                         ))}
                     </div>
+                    </div>
+
+                     
+
+                    {/* PORTRETT */}
+                    <div>
+                    <img
+                        src={about.portraitUrl}
+                        alt="Artist portrait"
+                        class="w-full aspect-4/5 object-cover"
+                    />
+                    </div>
+                    
+                    {/* CV */}
+                    <div class="mt-16 border-t pt-8">
+                        <h2 class="text-2xl font-semibold mb-6">CV</h2>
+                        <ul class="space-y-2">
+                        {about.CV?.map((item: string) => (
+                            <li>{item}</li>
+                        ))}
+                        </ul>
+                    </div>
+
                 </div>
-            
-
-            <div class="mt-16 border-t pt-8">
-                <h2 class="text-4xl font-semibold mb-8">CV</h2>
-                <ul class="list-disc ml-6 spac-y-2">
-                    {about.CV?.map((item: string) => (
-                        <li class="text-neutral-900 text-xl">{item}</li>
-                    ))}
-                </ul>
-            </div>
-
+        
         </section>
     </body>
 </Layout>

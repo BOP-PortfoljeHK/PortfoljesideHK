@@ -35,25 +35,25 @@ const contact = await sanity.fetch(groq`
                 
                 <div class="space-y-5 text-lg">
                     <div>
-                        <p class="text-sm uppercase tracking-wide text-gray-500">Navn</p>
-                        <p class="mt-1"></p>{contact?.contact?.name}</p>
+                        <p class="text-sm uppercase tracking-wide text-gray-500">Name</p>
+                        <p class="mt-1">{contact?.contact?.name}</p>
                     </div>
 
                     <div>
-                        <p class="text-sm uppercase tracking-wide text-gray-500">E-post</p>
-                        <p class="mt-1"></p>{contact?.contact?.email}</p>
+                        <p class="text-sm uppercase tracking-wide text-gray-500">Email</p>
+                        <p class="mt-1">{contact?.contact?.email}</p>
                     </div>
 
                     <div>
-                        <p class="text-sm uppercase tracking-wide text-gray-500">Telefon</p>
-                        <p class="mt-1"></p>{contact?.contact?.phone}</p>
+                        <p class="text-sm uppercase tracking-wide text-gray-500">Phone</p>
+                        <p class="mt-1">{contact?.contact?.phone}</p>
                     </div>
                 </div>
              
 
                 <div class="pt-6">
                     <h2 class="text-sm uppercase tracking-wide text-gray-500 mb-2">
-                        Følg meg
+                        Follow me
                     </h2>
 
                 <div class="pt-6 flex gap-4">
@@ -89,7 +89,7 @@ const contact = await sanity.fetch(groq`
                 <form class="space-y-5">
                     <div>
                         <label for="name" class="block text-sm uppercase tracking-wide text-gray-500 mb-2">
-                            Navn
+                            Name
                         </label>
                         <input
                             id="name"
@@ -100,7 +100,7 @@ const contact = await sanity.fetch(groq`
 
                     <div>
                         <label for="email" class="block text-sm uppercase tracking-wide text-gray-500 mb-2">
-                            E-post
+                            Email
                         </label>
                         <input
                             id="email"
@@ -111,7 +111,7 @@ const contact = await sanity.fetch(groq`
 
                     <div>
                         <label for="message" class="block text-sm uppercase tracking-wide text-gray-500 mb-2">
-                            Melding
+                            Message
                         </label>
                         <textarea
                             id="message"
@@ -124,7 +124,7 @@ const contact = await sanity.fetch(groq`
                         type="submit"
                         class="bg-black text-white px-6 py-3 font-semibold"
                     >
-                        Send
+                        Submit
                     </button>    
                 </form>
              </div>

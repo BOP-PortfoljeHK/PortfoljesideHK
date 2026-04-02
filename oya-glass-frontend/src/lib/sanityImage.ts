@@ -1,4 +1,4 @@
-import imageUrlBuilder from "@sanity/image-url";
+import { createImageUrlBuilder } from '@sanity/image-url'
 import type { SanityImageSource } from "@sanity/image-url";
 import { sanity } from "./sanityClient";
 
@@ -6,7 +6,7 @@ import { sanity } from "./sanityClient";
 // Dette gjør at vi kan holde all logikk for bilder på ett sted, 
 // og enkelt gjenbruke denne funksjonaliteten i hele prosjektet. Koden er skapt ved hjelp av AI (ChatGPT).
 
-const builder = imageUrlBuilder(sanity);
+const builder = createImageUrlBuilder(sanity);
 
 export function urlFor(source: SanityImageSource) {
   return builder.image(source).auto("format");
