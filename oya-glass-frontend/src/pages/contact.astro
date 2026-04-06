@@ -20,7 +20,8 @@ const contact = await sanity.fetch(groq`
   
 <Layout>
     <section class="px-6 py-12 md:px-10">
-        <div class="max-w-5xl">
+        <!-- mx-auto for at det skal se bedre ut på widescreen, blir litt mer sentrert -->
+        <div class="max-w-6xl mx-auto"> 
 
             <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
 
@@ -85,14 +86,32 @@ const contact = await sanity.fetch(groq`
         </div>  
 
             <!-- Høyre side -->
-             <div class="bg-gray-100 p-6 rounded-lg">
-                <form class="space-y-5">
+             <div class="bg-gray-100 p-8 rounded-xl shadow-lg">
+                <form
+                name="contact"
+                method="POST"
+                data-netlify="true"
+                netlify-honeypot="bot-field"
+                action="/takk" 
+                class="space-y-5"
+                >
+                <input type="hidden" name="form-name" value="contact" />
+
+                <!-- spam-beskyttelse, som sjuler et felt som bare roboter fyller ut -->
+                <p class="hidden">
+                    <label>
+                        Don't fill this out:
+                        <input name="bot-field" />
+                    </label>
+                </p>
+
                     <div>
                         <label for="name" class="block text-sm uppercase tracking-wide text-gray-500 mb-2">
                             Name
                         </label>
                         <input
                             id="name"
+                            name="name"
                             type="text"
                             class="w-full border border-gray-300 bg-white px-4 py-3 outline-none"
                             />
@@ -104,6 +123,7 @@ const contact = await sanity.fetch(groq`
                         </label>
                         <input
                             id="email"
+                            name="email"
                             type="email"
                             class="w-full border border-gray-300 bg-white px-4 py-3 outline-none"
                             />
@@ -115,6 +135,7 @@ const contact = await sanity.fetch(groq`
                         </label>
                         <textarea
                             id="message"
+                            name="message"
                             rows="6"
                             class="w-full border border-gray-300 bg-white px-4 py-3 outline-none"
                             ></textarea>
@@ -122,7 +143,7 @@ const contact = await sanity.fetch(groq`
 
                     <button
                         type="submit"
-                        class="bg-black text-white px-6 py-3 font-semibold"
+                        class="bg-black text-white px-6 py-3 font-semibold rounded-lg"
                     >
                         Submit
                     </button>    
