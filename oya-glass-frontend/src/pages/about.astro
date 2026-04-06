@@ -22,7 +22,7 @@ const about = await sanity.fetch(groq`
 
                     {/* TEKST */}
                     <div>
-                    <h1 class="text-4xl font-medium mb-6">{about.title}</h1>
+                    <h1 class="text-4xl mb-6">{about.title}</h1>
 
                     <div class="space-y-4 text-base leading-8 text-neutral-800">
                         {about.bio.map((block: any) => (
@@ -31,7 +31,6 @@ const about = await sanity.fetch(groq`
                     </div>
                     </div>
 
-                     
 
                     {/* PORTRETT */}
                     <div>
@@ -41,17 +40,6 @@ const about = await sanity.fetch(groq`
                         class="w-full aspect-4/5 object-cover"
                     />
                     </div>
-                    
-                    {/* CV */}
-                    <div class="mt-16 border-t pt-8">
-                        <h2 class="text-2xl font-semibold mb-6">CV</h2>
-                        <ul class="space-y-2">
-                        {about.CV?.map((item: string) => (
-                            <li>{item}</li>
-                        ))}
-                        </ul>
-                    </div>
-
                 </div>
         
         </section>

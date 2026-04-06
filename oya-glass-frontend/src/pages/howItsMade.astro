@@ -1,0 +1,85 @@
+---
+import Layout from "../layouts/Layout.astro";
+import groq from "groq";
+import { sanity } from "../lib/sanityClient";
+
+const howItsMadeVideo = await sanity.fetch(groq`
+  *[_type == "howItsMadeVideo"][0]{
+    title,
+    description,
+    videos[]{
+      title,
+      youtubeUrl,
+      description
+    }
+  }
+`);
+
+function getYoutubeId(url: string | null | undefined) {
+  const regExp =
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/;
+  const match = url?.match(regExp);
+  return match ? match[1] : null;
+}
+---
+
+<Layout title={howItsMadeVideo?.title ?? "Video"}>
+  <main class="max-w-5xl mx-auto space-y-10 px-4 py-16">
+    {howItsMadeVideo?.title && (
+      <h1 class="text-3xl md:text-4xl mb-10">
+        {howItsMadeVideo.title}
+      </h1>
+    )}
+
+    {howItsMadeVideo?.description && (
+      <div class="max-w-2xl mb-16 space-y-4 text-base leading-relaxed">
+        {howItsMadeVideo.description.map((block: any) => (
+          <p>{block.children?.map((child: any) => child.text).join("")}</p>
+        ))}
+      </div>
+    )}
+
+    <div class="space-y-20">
+      {howItsMadeVideo?.videos?.map((item: any) => {
+        const videoId = getYoutubeId(item.youtubeUrl);
+
+        return (
+          <section class="grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-8 md:gap-12 items-center border-t border-gray-300 pt-10">
+            <div class="space-y-4">
+              {item.title && (
+                <h2 class="text-2xl md:text-3xl leading-snug">
+                  {item.title}
+                </h2>
+              )}
+
+              {item.description && (
+                <div class="space-y-4 text-base leading-relaxed">
+                  {item.description.map((block: any) => (
+                    <p>{block.children?.map((child: any) => child.text).join("")}</p>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div>
+              {videoId && (
+                <div class="flex flex-col justify-center h-full">
+                  <div class="aspect-video w-full overflow-hidden rounded-lg">
+                    <iframe
+                      class="w-full h-full"
+                      src={`https://www.youtube.com/embed/${videoId}`}
+                      title={item.title || "YouTube-video"}
+                      frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowfullscreen
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+  </main>
+</Layout>
