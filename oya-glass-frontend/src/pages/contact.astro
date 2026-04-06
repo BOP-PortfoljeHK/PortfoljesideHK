@@ -20,7 +20,8 @@ const contact = await sanity.fetch(groq`
   
 <Layout>
     <section class="px-6 py-12 md:px-10">
-        <div class="max-w-5xl">
+        <!-- mx-auto for at det skal se bedre ut på widescreen, blir litt mer sentrert -->
+        <div class="max-w-6xl mx-auto"> 
 
             <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
 
@@ -85,12 +86,13 @@ const contact = await sanity.fetch(groq`
         </div>  
 
             <!-- Høyre side -->
-             <div class="bg-gray-100 p-6 rounded-lg">
+             <div class="bg-gray-100 p-8 rounded-xl shadow-lg">
                 <form
                 name="contact"
                 method="POST"
                 data-netlify="true"
-                netlify-honeypot="bot-field" 
+                netlify-honeypot="bot-field"
+                action="/takk" 
                 class="space-y-5"
                 >
                 <input type="hidden" name="form-name" value="contact" />
@@ -141,7 +143,7 @@ const contact = await sanity.fetch(groq`
 
                     <button
                         type="submit"
-                        class="bg-black text-white px-6 py-3 font-semibold"
+                        class="bg-black text-white px-6 py-3 font-semibold rounded-lg"
                     >
                         Submit
                     </button>    
