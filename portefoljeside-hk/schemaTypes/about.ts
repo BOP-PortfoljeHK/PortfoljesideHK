@@ -30,14 +30,6 @@ export default defineType({
       of: [{ type: "block" }],
       validation: (Rule) => Rule.required(),
     }),
-
-    defineField({
-      name: "CV",
-      title: "CV",
-      description: "Kort liste (utstillinger, priser, presse, osv.)",
-      type: "array",
-      of: [{ type: "string" }],
-    }),
   ],
 
   preview: {
