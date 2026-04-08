@@ -1,6 +1,7 @@
 import { defineField, defineType } from 'sanity';
 
-{/* Schema for YouTube video items, brukt i howItsMadeVideo dokumentet */}
+{/* Schema for YouTube video items, brukt i howItsMadeVideo dokumentet
+  Måtte opprette et eget schema slik at vi kunne håndtere både videoer og bilder på en konsistent måte */}
 
 export const youtubeVideoItem = defineType({
   name: 'youtubeVideoItem',
