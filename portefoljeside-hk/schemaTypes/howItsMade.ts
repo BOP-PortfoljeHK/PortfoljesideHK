@@ -25,7 +25,82 @@ export const howItsMadeVideo = defineType({
       name: 'videos',
       title: 'Media sections',
       type: 'array',
-      of: [{ type: 'youtubeVideoItem' }],
+      of: [
+        {
+          type: 'object',
+          name: 'youtubeVideoItem',
+          title: 'Video section',
+          fields: [
+
+            defineField({
+              name: 'title',
+              title: 'Video title',
+              type: 'string',
+            }),
+
+            defineField({
+              name: 'description',
+              title: 'Description',
+              type: 'array',
+              of: [{ type: 'block' }],
+            }),
+
+            defineField({
+              name: 'youtubeUrl',
+              title: 'YouTube URL',
+              type: 'url',
+            }),
+
+            defineField({
+              name: 'images',
+              title: 'Images',
+              type: 'array',
+              of: [
+                {
+                  type: 'image',
+                  options: { hotspot: true },
+                  fields: [
+
+                    defineField({
+                      name: 'alt',
+                      title: 'Alt-text',
+                      type: 'string',
+                    }),
+
+                    defineField({
+                      name: 'title',
+                      title: 'Image title',
+                      type: 'string',
+                    }),
+
+                    defineField({
+                      name: 'description',
+                      title: 'Description',
+                      type: 'text',
+                      rows: 3,
+                    }),
+
+                  ],
+                },
+              ],
+            }),
+
+          ],
+          preview: {
+            select: {
+              title: 'title',
+              subtitle: 'youtubeUrl',
+            },
+            prepare({ title, subtitle }) {
+              return {
+                title: title || 'No title',
+                subtitle: subtitle || 'Video section',
+              };
+            },
+          },
+        },
+      ],
     }),
+
   ],
 });

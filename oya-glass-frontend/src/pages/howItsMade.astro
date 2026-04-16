@@ -14,6 +14,8 @@ const howItsMadeVideo = await sanity.fetch(groq`
       description,
       images[]{
         alt,
+        title,
+        description,
         asset->{
           url
         }
@@ -72,7 +74,7 @@ function getYoutubeId(url: string | null | undefined) {
                   ))}
                 </div>
               )}
-            </div>
+          </div>
 
             {(hasVideo || hasImages) && (
               <div class="mt-10 max-w-4xl space-y-6">
@@ -102,6 +104,8 @@ function getYoutubeId(url: string | null | undefined) {
                         data-index={0}
                         data-src={item.images[0].asset.url}
                         data-alt={item.images[0].alt || item.title || ""}
+                        data-title={item.images[0].title || ""}
+                        data-description={item.images[0].description || ""}
                       >
                         <div class="overflow-hidden rounded-md bg-white">
                           <img
@@ -123,6 +127,8 @@ function getYoutubeId(url: string | null | undefined) {
                           data-index={imageIndex}
                           data-src={img.asset.url}
                           data-alt={img.alt || item.title || ""}
+                          data-title={img.title || ""}
+                          data-description={img.description || ""}
                         >
                           <div class="overflow-hidden rounded-md bg-white">
                             <img
@@ -143,13 +149,12 @@ function getYoutubeId(url: string | null | undefined) {
     </div>
   </main>
 
-  {/* Egen lightbox til bilder */}
   <div
     id="lightbox"
     class="fixed inset-0 z-99999 hidden bg-black/90 p-4 md:p-8"
     aria-hidden="true"
   >
-    <div class="relative flex h-full w-full items-center justify-center">
+    <div class="relative flex h-full w-full flex-col items-center justify-center">
       <button
         id="lightbox-close"
         type="button"
@@ -172,7 +177,7 @@ function getYoutubeId(url: string | null | undefined) {
         id="lightbox-image"
         src=""
         alt=""
-        class="max-h-full max-w-full rounded-lg object-contain"
+        class="max-h-[75vh] max-w-full rounded-lg object-contain"
       />
 
       <button
@@ -183,12 +188,21 @@ function getYoutubeId(url: string | null | undefined) {
       >
         &#8250;
       </button>
+
+      <div class="mt-6 max-w-2xl text-center text-white">
+        <p id="lightbox-title" class="text-base font-medium text-white"></p>
+        <p id="lightbox-description" class="mt-1 text-sm text-white/70"></p>
+        <p id="lightbox-counter" class="mt-2 text-xs text-white/50"></p>
+      </div>
     </div>
   </div>
 
   <script is:inline>
     const lightbox = document.getElementById("lightbox");
     const lightboxImage = document.getElementById("lightbox-image");
+    const lightboxTitle = document.getElementById("lightbox-title");
+    const lightboxDescription = document.getElementById("lightbox-description");
+    const lightboxCounter = document.getElementById("lightbox-counter");
     const closeBtn = document.getElementById("lightbox-close");
     const prevBtn = document.getElementById("lightbox-prev");
     const nextBtn = document.getElementById("lightbox-next");
@@ -203,6 +217,8 @@ function getYoutubeId(url: string | null | undefined) {
       groupedImages[section].push({
         src: trigger.dataset.src,
         alt: trigger.dataset.alt || "",
+        title: trigger.dataset.title || "",
+        description: trigger.dataset.description || "",
       });
     });
 
@@ -217,6 +233,9 @@ function getYoutubeId(url: string | null | undefined) {
 
       lightboxImage.src = current.src;
       lightboxImage.alt = current.alt;
+      lightboxTitle.textContent = current.title || "";
+      lightboxDescription.textContent = current.description || "";
+      lightboxCounter.textContent = `${currentIndex + 1}/${images.length}`;
 
       const hasMultiple = images.length > 1;
       prevBtn.style.display = hasMultiple ? "block" : "none";
@@ -238,6 +257,9 @@ function getYoutubeId(url: string | null | undefined) {
       lightbox.setAttribute("aria-hidden", "true");
       lightboxImage.src = "";
       lightboxImage.alt = "";
+      lightboxTitle.textContent = "";
+      lightboxDescription.textContent = "";
+      lightboxCounter.textContent = "";
     }
 
     function showPrev() {
