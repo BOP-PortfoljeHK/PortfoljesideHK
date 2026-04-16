@@ -6,7 +6,7 @@ import about from "./about";
 import oyaglass from "./oyaglass";
 import contact from "./contact";
 import homePage from "./homePage";
-import { howItsMadeVideo } from "./howItsMadeVideo";
+import { howItsMadeVideo } from "./howItsMade";
 import { youtubeVideoItem } from "./youtubeVideoItem";
 
 // Dynamiske sider
