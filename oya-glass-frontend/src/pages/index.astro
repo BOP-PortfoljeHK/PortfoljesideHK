@@ -14,15 +14,14 @@ const data = await sanity.fetch(groq`
 `);
 ---
 
+{/* Framside eller landing-page, oppdragsgiver kan endre bakgrunnsbilde via */}
+
 <Layout backgroundImage={data?.heroImage}>
   <section class="relative h-[70vh] min-h-125 w-full">
     
 
     <div class="relative z-10 mx-auto flex h-full max-w-7xl items-end px-6 pb-16 md:px-10">
       <div class="max-w-2xl text-white">
-        {/* <h1 class="text-4xl font-semibold leading-tight md:text-6xl">
-          Hanna K
-        </h1> */}
       </div>
     </div>
   </section>

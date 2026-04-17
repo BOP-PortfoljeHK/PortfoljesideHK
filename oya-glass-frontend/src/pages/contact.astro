@@ -101,7 +101,7 @@ const contact = await sanity.fetch(groq`
         </div>  
 
             <!-- Høyre side -->
-             <div class="bg-gray-100 p-8 rounded-xl shadow-lg">
+             <div class="bg-zinc-100 p-8 rounded-xl shadow-lg">
                 <form
                 name="contact"
                 method="POST"
@@ -156,12 +156,15 @@ const contact = await sanity.fetch(groq`
                             ></textarea>
                     </div>
 
+                    <div class="flex justify-center">
                     <button
                         type="submit"
-                        class="bg-black text-white px-6 py-3 font-semibold rounded-lg"
+                        class="bg-zinc-800 text-white px-6 py-3 font-semibold rounded-lg alignment-center"
                     >
                         Submit
-                    </button>    
+                    </button> 
+                </div>   
+
                 </form>
              </div>
             

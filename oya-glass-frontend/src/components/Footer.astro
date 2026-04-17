@@ -13,22 +13,21 @@ const contact = await sanity.fetch(groq`
     `);
 ---
 
+<footer class="w-full px-8 py-4 bg-[#c2b1a4] border-t border-gray-300 mt-12">
+  <div class="w-full px-8 flex flex-col items-center text-center space-y-3">
 
+    <!-- NAVN + TITTEL -->
+    <div>
+      <p class="text-base md:text-lg font-medium text-black m-0">
+        Hanna Karlsen
+      </p>
+      <p class="text-sm text-black/80 m-0">
+        Glass artist
+      </p>
+    </div>
 
-<footer class="w-full px-8 py-6 bg-[#c2b1a4] mt-12">
-    <div class="w-full px-8 flex justify-between items-center">
-
-        <!-- VENSTRE -->
-        <div class="space-y-1">
-            <p class="m-0 text-base md:text-lg text-black">Hanna Karlsen</p>
-            <p class="m-0 text-base md:text-lg text-black">Glass artist</p>
-        </div>
-
-        <!-- HØYRE -->
-        <div class="text-right space-y-1">
-            
-        <!-- IKONER -->
-         <div class="flex gap-4">
+    <!-- IKONER -->
+    <div class="flex gap-5 mt-1">
 
             <!-- Instagram -->
          <div class="flex flex-col gap-2 items-start">    
@@ -70,10 +69,10 @@ const contact = await sanity.fetch(groq`
                 </a>
            ))}
 
-         <!-- COPYRIGHT -->
-          <p class="m-0 text-sm text-black">© {new Date().getFullYear()}</p>
-            
-        </div>
-        </div>
-    </div>
+    <!-- COPYRIGHT -->
+    <p class="text-xs text-black/70 mt-2">
+      © {new Date().getFullYear()}
+    </p>
+
+  </div>
 </footer>

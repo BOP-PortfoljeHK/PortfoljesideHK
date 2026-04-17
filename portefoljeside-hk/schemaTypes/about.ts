@@ -1,6 +1,6 @@
 import { defineField, defineType } from "sanity";
 
-{/* Schema for "about" eller "om meg"-seksjonen på porteføljesiden. Inkluderer felt for tittel, portrettbilde, biografi og CV. */}
+{/* Schema for "about" eller "om meg"-seksjonen på porteføljesiden. Inkluderer felt for tittel, portrettbilde og biografi */}
 
 export default defineType({
   name: "about",
