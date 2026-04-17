@@ -73,6 +73,11 @@ export default defineType({
                   type: "url",
                   validation: (Rule) => Rule.required(),
                 }),
+                defineField({
+                  name: "username",
+                  title: "Brukernavn (valgfritt)",
+                  type: "string",
+                })
               ],
               preview: {
                 select: { title: "label", subtitle: "url" },

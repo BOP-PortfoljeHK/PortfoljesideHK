@@ -29,12 +29,13 @@ const contact = await sanity.fetch(groq`
     <!-- IKONER -->
     <div class="flex gap-5 mt-1">
 
-            <!-- Instagram -->
-         <div class="flex flex-col gap-2 items-start">    
+            <!-- Instagram og Facebook -->
+         <div class="flex gap-5 items-center justify-center">    
            {contact?.contact?.socialLinks?.map((link: any) => (
                 <a href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                title={link.username}
                 class="flex items-center gap-2 hover:opacity-70 transition"
                 >
 
@@ -44,12 +45,6 @@ const contact = await sanity.fetch(groq`
                             <path d="M7 2C4.2 2 2 4.2 2 7v10c0 2.8 2.2 5 5 5h10c2.8 0 5-2.2 5-5V7c0-2.8-2.2-5-5-5H7zm5 5a5 5 0 110 10 5 5 0 010-10zm6.5-.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM12 9a3 3 0 100 6 3 3 0 000-6z"/>
                         </svg>
 
-                        <span class="text-sm text-black">
-                            {link.url
-                                .replace("https://www.instagram.com/", "")
-                                .replace("https://instagram.com/", "")
-                                .replace("/", "")}
-                        </span>
                         </>
                     )}
                     {link.label === "Facebook" && (
@@ -57,22 +52,17 @@ const contact = await sanity.fetch(groq`
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M22 12a10 10 0 10-11.5 9.9v-7H7v-2.9h3.5V9.8c0-3.4 2-5.3 5-5.3 1.5 0 3 .3 3 .3v3.3h-1.7c-1.7 0-2.3 1.1-2.3 2.2v2.7H18l-.5 2.9h-3v7A10 10 0 0022 12z"/>
                         </svg>
-
-                        <span class="text-sm text-black">
-                            {link.url
-                                .replace("https://www.facebook.com/", "")
-                                .replace("https://facebook.com/", "")
-                                .replace("/", "")}
-                        </span>
                         </>
                     )}
                 </a>
            ))}
-
-    <!-- COPYRIGHT -->
+  </div>
+    </div>
+    
+   <!-- COPYRIGHT -->
+    <div class="text-center mt-4">
     <p class="text-xs text-black/70 mt-2">
       © {new Date().getFullYear()}
     </p>
-
-  </div>
+    </div>
 </footer>
