@@ -100,7 +100,7 @@ const contact = await sanity.fetch(groq`
      
         </div>  
 
-            <!-- Høyre side -->
+            <!-- Høyre side, skjema -->
              <div class="bg-zinc-100 p-8 rounded-xl shadow-lg">
                 <form
                 name="contact"
@@ -128,6 +128,7 @@ const contact = await sanity.fetch(groq`
                             id="name"
                             name="name"
                             type="text"
+                            required
                             class="w-full border border-gray-300 bg-white px-4 py-3 outline-none rounded-xl focus:border-black focus:ring-1 focus:ring-black transition"
                             />
                     </div>
@@ -140,6 +141,7 @@ const contact = await sanity.fetch(groq`
                             id="email"
                             name="email"
                             type="email"
+                            required
                             class="w-full border border-gray-300 bg-white px-4 py-3 outline-none rounded-xl focus:border-black focus:ring-1 focus:ring-black transition"
                             />
                     </div>
@@ -152,6 +154,7 @@ const contact = await sanity.fetch(groq`
                             id="message"
                             name="message"
                             rows="6"
+                            required
                             class="w-full border border-gray-300 bg-white px-4 py-3 outline-none rounded-xl focus:border-black focus:ring-1 focus:ring-black transition"
                             ></textarea>
                     </div>
