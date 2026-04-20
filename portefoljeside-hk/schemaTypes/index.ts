@@ -8,6 +8,7 @@ import contact from "./contact";
 import homePage from "./homePage";
 import { howItsMadeVideo } from "./howItsMade";
 import { youtubeVideoItem } from "./youtubeVideoItem";
+import privacyPolicy from "./privacyPolicy";
 
 // Dynamiske sider
 import category from "./category";
@@ -16,4 +17,4 @@ import work from "./work";
 
 
 
-export const schemaTypes = [homePage, oyaglass, howItsMadeVideo, youtubeVideoItem, about, contact, category, series, work];
+export const schemaTypes = [homePage, oyaglass, howItsMadeVideo, youtubeVideoItem, about, contact, category, series, work, privacyPolicy];

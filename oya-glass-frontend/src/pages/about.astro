@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import groq from "groq";
 import { sanity } from "../lib/sanityClient";
+import PortableText from "../components/PortableText.astro";
 
 const about = await sanity.fetch(groq`
     *[_type == "about"][0]{
@@ -14,34 +15,23 @@ const about = await sanity.fetch(groq`
 ---
 
 <Layout>
-    
-    <body class="bg-slate-950 text-white">
+  <body class="bg-slate-950 text-neutral-800">
+    <section class="mx-auto max-w-5xl px-4 py-16">
+      <div class="grid gap-10 md:grid-cols-[1fr_380px] md:gap-16 items-center">
+        <div>
+          <h1 class="text-4xl mb-6">{about.title}</h1>
 
-                <section class="mx-auto max-w-5xl px-4 py-16">
-                <div class="grid gap-10 md:grid-cols-[1fr_380px] md:gap-16 items-center">
+          <PortableText value={about.bio} />
+        </div>
 
-                    {/* TEKST */}
-                    <div>
-                    <h1 class="text-4xl mb-6">{about.title}</h1>
-
-                    <div class="space-y-4 text-base leading-8 text-neutral-800">
-                        {about.bio.map((block: any) => (
-                        <p>{block.children[0].text}</p>
-                        ))}
-                    </div>
-                    </div>
-
-
-                    {/* PORTRETT */}
-                    <div>
-                    <img
-                        src={about.portraitUrl}
-                        alt="Artist portrait"
-                        class="w-full aspect-4/5 object-cover"
-                    />
-                    </div>
-                </div>
-        
-        </section>
-    </body>
+        <div>
+          <img
+            src={about.portraitUrl}
+            alt="Artist portrait"
+            class="w-full aspect-4/5 object-cover"
+          />
+        </div>
+      </div>
+    </section>
+  </body>
 </Layout>

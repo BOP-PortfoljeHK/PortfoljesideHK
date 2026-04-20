@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import PortableText from "../components/PortableText.astro";
 import groq from "groq";
 import { sanity } from "../lib/sanityClient";
 
@@ -45,10 +46,8 @@ function getYoutubeId(url: string | null | undefined) {
     )}
 
     {howItsMadeVideo?.description && (
-      <div class="max-w-3xl mb-16 space-y-4 text-base leading-relaxed text-black/80">
-        {howItsMadeVideo.description.map((block: any) => (
-          <p>{block.children?.map((child: any) => child.text).join("")}</p>
-        ))}
+      <div class="max-w-3xl mb-16">
+        <PortableText value={howItsMadeVideo.description} />
       </div>
     )}
 
@@ -68,13 +67,11 @@ function getYoutubeId(url: string | null | undefined) {
               )}
 
               {item.description && (
-                <div class="space-y-4 text-base leading-[1.85] text-black/85">
-                  {item.description.map((block: any) => (
-                    <p>{block.children?.map((child: any) => child.text).join("")}</p>
-                  ))}
+                <div>
+                  <PortableText value={item.description} />
                 </div>
               )}
-          </div>
+            </div>
 
             {(hasVideo || hasImages) && (
               <div class="mt-10 max-w-4xl space-y-6">

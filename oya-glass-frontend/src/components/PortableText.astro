@@ -1,0 +1,242 @@
+---
+{/* Portable text komponent for å vise innhold i Sanity, og ikke bare enkel tekst.
+    Ved hjelp av denne komponenten kan vi vise rik tekstinnhold med formatering og lenker. 
+    Denne koden er hentet fra ChatGPT*/}
+
+interface Props {
+  value?: any[];
+}
+
+const { value = [] } = Astro.props;
+const blocks = Array.isArray(value) ? value : [];
+
+type ListGroup = {
+  type: 'ul' | 'ol';
+  level: number;
+  items: Array<{
+    block: any;
+    children: RenderNode[];
+  }>;
+};
+
+type RenderNode =
+  | { kind: 'block'; block: any }
+  | { kind: 'list'; list: ListGroup };
+
+function escapeHtml(str: string = '') {
+  return str
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function escapeAttr(str: string = '') {
+  return escapeHtml(str);
+}
+
+function renderChildren(children: any[] = [], markDefs: any[] = []) {
+  return children
+    .map((child: any) => {
+      let html = escapeHtml(child?.text ?? '');
+      const marks = child?.marks ?? [];
+
+      for (const mark of marks) {
+        if (mark === 'strong') {
+          html = `<strong>${html}</strong>`;
+          continue;
+        }
+
+        if (mark === 'em') {
+          html = `<em>${html}</em>`;
+          continue;
+        }
+
+        const def = markDefs.find((d: any) => d?._key === mark && d?._type === 'link');
+        if (def?.href) {
+          const href = escapeAttr(def.href);
+          const isExternal = /^https?:\/\//i.test(def.href);
+
+          html = `<a href="${href}"${
+            isExternal ? ' target="_blank" rel="noopener noreferrer"' : ''
+          } class="underline underline-offset-4 text-blue-400 hover:text-blue-300">${html}</a>`;
+        }
+      }
+
+      return html;
+    })
+    .join('');
+}
+
+function normaliseListType(listItem: string) {
+  return listItem === 'number' ? 'ol' : 'ul';
+}
+
+function buildTree(blocks: any[]): RenderNode[] {
+  const root: RenderNode[] = [];
+  const listStack: ListGroup[] = [];
+
+  function closeListsToLevel(targetLevel: number) {
+    while (listStack.length > targetLevel) {
+      listStack.pop();
+    }
+  }
+
+  for (const block of blocks) {
+    if (block?._type !== 'block') continue;
+
+    if (!block?.listItem) {
+      closeListsToLevel(0);
+      root.push({ kind: 'block', block });
+      continue;
+    }
+
+    const level = Math.max(1, block?.level ?? 1);
+    const type = normaliseListType(block.listItem);
+
+    closeListsToLevel(level - 1);
+
+    let currentList = listStack[level - 1];
+
+    if (!currentList || currentList.type !== type) {
+      currentList = {
+        type,
+        level,
+        items: [],
+      };
+
+      if (level === 1) {
+        root.push({ kind: 'list', list: currentList });
+      } else {
+        const parentList = listStack[level - 2];
+        const parentItem = parentList?.items[parentList.items.length - 1];
+
+        if (parentItem) {
+          parentItem.children.push({ kind: 'list', list: currentList });
+        } else {
+          root.push({ kind: 'list', list: currentList });
+        }
+      }
+
+      listStack[level - 1] = currentList;
+    }
+
+    listStack.length = level;
+
+    currentList.items.push({
+      block,
+      children: [],
+    });
+  }
+
+  closeListsToLevel(0);
+
+  return root;
+}
+
+const tree = buildTree(blocks);
+---
+
+<div class="space-y-5 text-base leading-8 text-neutral-800">
+  {tree.map((node: RenderNode) => (
+    node.kind === 'block' ? (
+      node.block?.style === 'h1' ? (
+        <h1 class="mt-10 mb-4 text-3xl font-semibold text-neutral-800" set:html={renderChildren(node.block?.children, node.block?.markDefs)} />
+      ) : node.block?.style === 'h2' ? (
+        <h2 class="mt-8 mb-3 text-2xl font-semibold text-neutral-800" set:html={renderChildren(node.block?.children, node.block?.markDefs)} />
+      ) : node.block?.style === 'h3' ? (
+        <h3 class="mt-6 mb-2 text-xl font-semibold text-neutral-800" set:html={renderChildren(node.block?.children, node.block?.markDefs)} />
+      ) : node.block?.style === 'blockquote' ? (
+        <blockquote
+          class="my-6 border-l-4 border-neutral-600 pl-4 italic text-neutral-800"
+          set:html={renderChildren(node.block?.children, node.block?.markDefs)}
+        />
+      ) : (
+        <p set:html={renderChildren(node.block?.children, node.block?.markDefs)} />
+      )
+    ) : (
+      node.list.type === 'ol' ? (
+        <ol class="list-decimal pl-6 space-y-2">
+          {node.list.items.map((item: any) => (
+            <li>
+              <span set:html={renderChildren(item.block?.children, item.block?.markDefs)} />
+              {item.children?.length > 0 && (
+                <div class="mt-2 space-y-4">
+                  {item.children.map((child: RenderNode) => (
+                    child.kind === 'block' ? (
+                      child.block?.style === 'blockquote' ? (
+                        <blockquote
+                          class="my-4 border-l-4 border-neutral-600 pl-4 italic text-neutral-800"
+                          set:html={renderChildren(child.block?.children, child.block?.markDefs)}
+                        />
+                      ) : (
+                        <p set:html={renderChildren(child.block?.children, child.block?.markDefs)} />
+                      )
+                    ) : child.list.type === 'ol' ? (
+                      <ol class="list-decimal pl-6 space-y-2">
+                        {child.list.items.map((nestedItem: any) => (
+                          <li>
+                            <span set:html={renderChildren(nestedItem.block?.children, nestedItem.block?.markDefs)} />
+                          </li>
+                        ))}
+                      </ol>
+                    ) : (
+                      <ul class="list-disc pl-6 space-y-2">
+                        {child.list.items.map((nestedItem: any) => (
+                          <li>
+                            <span set:html={renderChildren(nestedItem.block?.children, nestedItem.block?.markDefs)} />
+                          </li>
+                        ))}
+                      </ul>
+                    )
+                  ))}
+                </div>
+              )}
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <ul class="list-disc pl-6 space-y-2">
+          {node.list.items.map((item: any) => (
+            <li>
+              <span set:html={renderChildren(item.block?.children, item.block?.markDefs)} />
+              {item.children?.length > 0 && (
+                <div class="mt-2 space-y-4">
+                  {item.children.map((child: RenderNode) => (
+                    child.kind === 'block' ? (
+                      child.block?.style === 'blockquote' ? (
+                        <blockquote
+                          class="my-4 border-l-4 border-neutral-600 pl-4 italic text-neutral-400"
+                          set:html={renderChildren(child.block?.children, child.block?.markDefs)}
+                        />
+                      ) : (
+                        <p set:html={renderChildren(child.block?.children, child.block?.markDefs)} />
+                      )
+                    ) : child.list.type === 'ol' ? (
+                      <ol class="list-decimal pl-6 space-y-2">
+                        {child.list.items.map((nestedItem: any) => (
+                          <li>
+                            <span set:html={renderChildren(nestedItem.block?.children, nestedItem.block?.markDefs)} />
+                          </li>
+                        ))}
+                      </ol>
+                    ) : (
+                      <ul class="list-disc pl-6 space-y-2">
+                        {child.list.items.map((nestedItem: any) => (
+                          <li>
+                            <span set:html={renderChildren(nestedItem.block?.children, nestedItem.block?.markDefs)} />
+                          </li>
+                        ))}
+                      </ul>
+                    )
+                  ))}
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      )
+    )
+  ))}
+</div>

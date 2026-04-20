@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { urlFor } from "../lib/sanityImage";
+import PortableText from "../components/PortableText.astro";
 
 const { data } = Astro.props;
 
@@ -17,29 +18,6 @@ const galleryItems =
         : work.title,
   })) ?? [];
 
-function normalizeMarks(children: any[] = []) {
-  return children.map((child: any) => {
-    const text = child.text ?? "";
-
-    if (child.marks?.includes("strong")) {
-      return { type: "strong", text };
-    }
-
-    if (child.marks?.includes("em")) {
-      return { type: "em", text };
-    }
-
-    return { type: "text", text };
-  });
-}
-
-const descriptionBlocks =
-  data?.description
-    ?.filter((block: any) => block._type === "block")
-    .map((block: any) => ({
-      style: block.style ?? "normal",
-      children: normalizeMarks(block.children ?? []),
-    })) ?? [];
 ---
 
 {/* Denne siden viser innholdet for en spesifikk serie, via slug fra Sanity.
@@ -57,64 +35,12 @@ Eks. når bruker klikker på en serie i kategorisiden. */}
         {data.title}
       </h1>
 
-      {descriptionBlocks.length > 0 && (
-        <div class="space-y-4">
-          {descriptionBlocks.map((block: any) =>
-            block.style === "h2" ? (
-              <h2 class="text-xl font-medium leading-tight text-neutral-900 sm:text-2xl">
-                {block.children.map((child: any) =>
-                  child.type === "strong" ? (
-                    <strong class="font-semibold text-neutral-900">{child.text}</strong>
-                  ) : child.type === "em" ? (
-                    <em class="italic">{child.text}</em>
-                  ) : (
-                    child.text
-                  )
-                )}
-              </h2>
-            ) : block.style === "h3" ? (
-              <h3 class="text-lg font-medium leading-tight text-neutral-900 sm:text-xl">
-                {block.children.map((child: any) =>
-                  child.type === "strong" ? (
-                    <strong class="font-semibold text-neutral-900">{child.text}</strong>
-                  ) : child.type === "em" ? (
-                    <em class="italic">{child.text}</em>
-                  ) : (
-                    child.text
-                  )
-                )}
-              </h3>
-            ) : block.style === "blockquote" ? (
-              <blockquote class="border-l-2 border-neutral-300 pl-4 italic text-neutral-600">
-                {block.children.map((child: any) =>
-                  child.type === "strong" ? (
-                    <strong class="font-semibold text-neutral-900">{child.text}</strong>
-                  ) : child.type === "em" ? (
-                    <em class="italic">{child.text}</em>
-                  ) : (
-                    child.text
-                  )
-                )}
-              </blockquote>
-            ) : (
-              <p class="text-base leading-7 text-neutral-700">
-                {block.children.map((child: any) =>
-                  child.type === "strong" ? (
-                    <strong class="font-semibold text-neutral-900">{child.text}</strong>
-                  ) : child.type === "em" ? (
-                    <em class="italic">{child.text}</em>
-                  ) : (
-                    child.text
-                  )
-                )}
-              </p>
-            )
-          )}
+      {data.description && (
+        <div class="max-w-3xl">
+          <PortableText value={data.description} />
         </div>
       )}
     </section>
-
-    {/* viser alle verk i serien */}
 
     {galleryItems.length > 0 && (
       <section class="grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 md:gap-y-14">
@@ -147,7 +73,6 @@ Eks. når bruker klikker på en serie i kategorisiden. */}
                 />
               </button>
 
-              {/* figcaption betyr beskrivelse for bildet */}
               <figcaption class="mt-3 md:mt-4">
                 <p class="text-xl leading-tight tracking-tight text-neutral-950 sm:text-2xl md:text-[1.7rem]">
                   {item.workTitle}
@@ -163,8 +88,7 @@ Eks. når bruker klikker på en serie i kategorisiden. */}
     )}
   </main>
 
-
-  {/* Lightbox-komponenten for å vise større versjon av bildet når det klikkes */}
+  {/* Lightbox, for å vise bilder i et stort vindu */}
   <div
     id="lightbox"
     class="fixed inset-0 z-10000 hidden items-center justify-center bg-black/95 px-4 py-6"
@@ -224,8 +148,7 @@ Eks. når bruker klikker på en serie i kategorisiden. */}
     </button>
   </div>
 
-
-  {/* Lightbox-skriptet for å håndtere åpning, lukking og navigering av bildene i lightboxen, JavaScript */}
+  {/* Lightbox-skriptet er også inkludert her, siden det er spesifikt for denne siden og ikke brukes andre steder. */}
   <script>
     const lightbox = document.getElementById("lightbox");
     const lightboxImage = document.getElementById("lightbox-image") as HTMLImageElement | null;

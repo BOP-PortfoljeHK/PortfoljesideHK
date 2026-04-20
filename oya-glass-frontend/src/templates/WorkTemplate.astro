@@ -1,32 +1,9 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { urlFor } from "../lib/sanityImage";
+import PortableText from "../components/PortableText.astro";
 
 const { data } = Astro.props;
-
-function normalizeMarks(children: any[] = []) {
-  return children.map((child: any) => {
-    const text = child.text ?? "";
-
-    if (child.marks?.includes("strong")) {
-      return { type: "strong", text };
-    }
-
-    if (child.marks?.includes("em")) {
-      return { type: "em", text };
-    }
-
-    return { type: "text", text };
-  });
-}
-
-const descriptionBlocks =
-  data?.description
-    ?.filter((block: any) => block._type === "block")
-    .map((block: any) => ({
-      style: block.style ?? "normal",
-      children: normalizeMarks(block.children ?? []),
-    })) ?? [];
 
 const imageAlt =
   typeof data?.image?.alt === "string" && data.image.alt.trim().length > 0
@@ -90,67 +67,16 @@ const meta = [data?.year, data?.medium, data?.dimensions]
           </p>
         )}
 
-        {descriptionBlocks.length > 0 && (
-          <div class="max-w-3xl space-y-5">
-            {descriptionBlocks.map((block: any) =>
-              block.style === "h2" ? (
-                <h2 class="text-2xl font-semibold text-neutral-900">
-                  {block.children.map((child: any) =>
-                    child.type === "strong" ? (
-                      <strong class="font-semibold text-neutral-900">{child.text}</strong>
-                    ) : child.type === "em" ? (
-                      <em class="italic">{child.text}</em>
-                    ) : (
-                      child.text
-                    )
-                  )}
-                </h2>
-              ) : block.style === "h3" ? (
-                <h3 class="text-xl font-semibold text-neutral-900">
-                  {block.children.map((child: any) =>
-                    child.type === "strong" ? (
-                      <strong class="font-semibold text-neutral-900">{child.text}</strong>
-                    ) : child.type === "em" ? (
-                      <em class="italic">{child.text}</em>
-                    ) : (
-                      child.text
-                    )
-                  )}
-                </h3>
-              ) : block.style === "blockquote" ? (
-                <blockquote class="border-l-4 border-neutral-300 pl-4 italic text-neutral-600">
-                  {block.children.map((child: any) =>
-                    child.type === "strong" ? (
-                      <strong class="font-semibold text-neutral-900">{child.text}</strong>
-                    ) : child.type === "em" ? (
-                      <em class="italic">{child.text}</em>
-                    ) : (
-                      child.text
-                    )
-                  )}
-                </blockquote>
-              ) : (
-                <p class="text-base leading-8 text-neutral-700">
-                  {block.children.map((child: any) =>
-                    child.type === "strong" ? (
-                      <strong class="font-semibold text-neutral-900">{child.text}</strong>
-                    ) : child.type === "em" ? (
-                      <em class="italic">{child.text}</em>
-                    ) : (
-                      child.text
-                    )
-                  )}
-                </p>
-              )
-            )}
+        {data.description && (
+          <div class="max-w-3xl">
+            <PortableText value={data.description} />
           </div>
         )}
       </div>
     </section>
   </main>
 
-
-  { /* Lightbox for å vise større versjon av bildet */}
+  {/* Lightbox for å vise bilder i et stort vindu */}
   <div
     id="lightbox"
     class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 p-4"
@@ -185,7 +111,7 @@ const meta = [data?.year, data?.medium, data?.dimensions]
     </div>
   </div>
 
-  {/* JavaScript for å håndtere lightbox-funksjonalitet */}
+  {/* Lightbox-script for å kunne kjøre lightbox-funksjonaliteten */}
   <script>
     const lightbox = document.getElementById("lightbox");
     const lightboxImage = document.getElementById("lightbox-image");
