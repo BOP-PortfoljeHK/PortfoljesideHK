@@ -1,12 +1,55 @@
+
 @import "tailwindcss";
 
 @layer base {
   body {
     font-size: 1.2rem;
     font-family: 'Cambria', serif;
-    color: rgb(37, 37, 37);
-    background-color: #f6f1f1;
+    color: rgb(31 41 55);
+    background-color: #e3dfdf;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+    line-height: 1.2;
+    font-weight: 500;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    line-height: 1.3;
+    font-weight: 500;
+    margin-top: 1.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  p {
+    font-size: 1.115rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    max-width: 90ch;
+  }
+
+  ul,
+  ol {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    margin-left: 1.5rem;
+    max-width: 70ch;
+  }
+
+  li {
+    margin-bottom: 0.75rem;
   }
 }
-
-
