@@ -129,6 +129,7 @@ const contact = await sanity.fetch(groq`
                             name="name"
                             type="text"
                             required
+                            minlength="2"
                             class="w-full border border-gray-300 bg-white px-4 py-3 outline-none rounded-xl focus:border-black focus:ring-1 focus:ring-black transition"
                             />
                     </div>
@@ -155,6 +156,7 @@ const contact = await sanity.fetch(groq`
                             name="message"
                             rows="6"
                             required
+                            minlength="10"
                             class="w-full border border-gray-300 bg-white px-4 py-3 outline-none rounded-xl focus:border-black focus:ring-1 focus:ring-black transition"
                             ></textarea>
                     </div>
