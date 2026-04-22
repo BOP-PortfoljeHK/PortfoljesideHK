@@ -3,12 +3,12 @@ const currentPath = Astro.url.pathname;
 const { categories = [] } = Astro.props;
 ---
 
-<header id="site-header" class="fixed top-0 left-0 w-full z-9999 px-8 py-6 bg-[#c2b1a4]/95 backdrop-blur-lg transition-transform duration-300">
+<header id="site-header" class="fixed top-0 left-0 w-full z-9999 px-8 py-6 bg-neutral-100/50 backdrop-blur-lg transition-transform duration-300">
   <div class="w-full px-8">
     <nav class="flex items-center justify-between">
       <a
         href="/"
-        class="text-[2rem] text-black no-underline tracking-tight hover:opacity-70 transition"
+        class="text-[2.2rem] text-black no-underline tracking-tight hover:opacity-70 transition transform hover:scale-105"
       >
         Hanna Karlsen
       </a>
@@ -17,7 +17,7 @@ const { categories = [] } = Astro.props;
       <button id="menu-toggle" class="md:hidden flex flex-col justify-center items-center w-10 h-10" aria-label="Toggle mobile menu">
         <span class="line block w-6 h-0.5 bg-black mb-1 transition duration-300"></span>
         <span class="line block w-6 h-0.5 bg-black mb-1 transition duration-300"></span>
-        <span class="line block w-6 h-0.5 bg-black transition duration-300"></span>
+        <span class="line block w-6 h-0.5 bg-black mb-1 transition duration-300"></span>
       </button>
 
       {/* Viser dynamisk meny for kategorier, slug-sider */}
@@ -25,7 +25,7 @@ const { categories = [] } = Astro.props;
         <div class="relative group">
           <a
             href="/work"
-            class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:opacity-70 ${
+            class={`inline-block text-black no-underline text-base md:text-lg font-medium tracking-wide transition transform hover:opacity-70 hover:scale-105 ${
               currentPath === "/work" ||
               categories.some((category: { slug: any }) => currentPath === `/${category.slug}`)
                 ? "underline"
@@ -35,11 +35,11 @@ const { categories = [] } = Astro.props;
             Work
           </a>
 
-          <div class="absolute left-0 top-full hidden group-hover:block hover:block bg-[#c2b1a4] text-black px-6 py-4 min-w-55 shadow-lg z-9999">
+          <div class="absolute left-0 top-full hidden group-hover:block hover:block bg-neutral-100/98 text-black px-6 py-4 min-w-55 shadow-lg z-9999">
             {categories.map((category: { slug: any; title: unknown }) => (
               <a
                 href={`/${category.slug}`}
-                class={`block py-1 text-base no-underline transition hover:opacity-70 ${
+                class={`block py-1 text-base no-underline transition hover:opacity-70 hover:scale-105 ${
                   currentPath === `/${category.slug}`
                     ? "underline"
                     : "hover:underline"
@@ -54,7 +54,7 @@ const { categories = [] } = Astro.props;
         {/* Statisk meny for "faste sider" */}
         <a
           href="/oyaglass"
-          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:opacity-70 ${
+          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:opacity-70 hover:scale-105 ${
             currentPath === "/oyaglass" ? "underline" : ""
           }`}
         >
@@ -63,7 +63,7 @@ const { categories = [] } = Astro.props;
 
         <a
           href="/howItsMade"
-          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:opacity-70 ${
+          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:opacity-70 hover:scale-105 ${
             currentPath === "/howItsMade" ? "underline" : ""
           }`}
           >
@@ -72,7 +72,7 @@ const { categories = [] } = Astro.props;
 
         <a
           href="/about"
-          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:opacity-70 ${
+          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:opacity-70 hover:scale-105 ${
             currentPath === "/about" ? "underline" : ""
           }`}
         >
@@ -81,7 +81,7 @@ const { categories = [] } = Astro.props;
 
         <a
           href="/contact"
-          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:opacity-70 ${
+          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:opacity-70 hover:scale-105 ${
             currentPath === "/contact" ? "underline" : ""
           }`}
         >
@@ -94,22 +94,22 @@ const { categories = [] } = Astro.props;
 
   {/* Mobilmeny */}
  
-  <nav id="mobile-menu" class="hidden md:hidden absolute right-8 top-full mt-2 bg-[#c2b1a4] px-6 py-4 shadow-lg">
+  <nav id="mobile-menu" class="hidden md:hidden absolute right-8 top-full mt-2 bg-neutral-100/98 px-6 py-4 shadow-lg">
     <div class="flex flex-col space-y-3">
-      <a href="/work" class="text-black no-underline hover:underline transition">Work</a>
+      <a href="/work" class="text-black no-underline hover:underline transition hover:scale-105">Work</a>
 
       {categories.map((category: { slug: any; title: unknown }) => (
         <a
           href={`/${category.slug}`}
-          class="text-black no-underline hover:underline pl-4 transition hover:opacity-70"
+          class="text-black no-underline hover:underline pl-4 transition hover:opacity-70 hover:scale-105"
         >
           {category.title}
         </a>
       ))}
 
-      <a href="/oyaglass" class="text-black no-underline hover:underline transition hover:opacity-70">Øya glass studio</a>
-      <a href="/about" class="text-black no-underline hover:underline transition hover:opacity-70">About</a>
-      <a href="/contact" class="text-black no-underline hover:underline transition hover:opacity-70">Contact</a>
+      <a href="/oyaglass" class="text-black no-underline hover:underline transition hover:opacity-70 hover:scale-105">Øya glass studio</a>
+      <a href="/about" class="text-black no-underline hover:underline transition hover:opacity-70 hover:scale-105">About</a>
+      <a href="/contact" class="text-black no-underline hover:underline transition hover:opacity-70 hover:scale-105">Contact</a>
     </div>
   </nav>
 </header>
