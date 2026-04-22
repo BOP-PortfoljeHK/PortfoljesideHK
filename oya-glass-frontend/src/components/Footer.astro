@@ -13,28 +13,33 @@ const contact = await sanity.fetch(groq`
     `);    
 ---
 
-<footer class="mt-12 bg-neutral-100/40">
+<footer class="mt-12 bg-neutral-100/35 backdrop-blur-lg">
   <div class="mx-auto flex max-w-4xl flex-col items-center px-6 py-5 text-center">
     
-    <!-- NAVN + TITTEL -->
+    <!--NAVN + TITTEL 
     <div class="space-y-0.5">
-      <p class="m-0 text-lg text-black">
+      <p class="m-0 text-lg text-black tracking-wider">
         Hanna Karlsen
       </p>
       <p class="text-xs uppercase tracking-wide text-black/60">
         Glass artist
       </p>
     </div>
+   -->
 
-    <!-- IKONER -->
-    <div class="mt-1 flex items-center justify-center gap-3">
+   
+  <!-- IKONER -->
+   <div class="mt-1 flex flex-col items-center gap-1">
+    <p class="text-sm tracking-widest text-black"> Follow me</p>
+
+    <div class="flex justify-center gap-4">
       {contact?.contact?.socialLinks?.map((link: any) => (
         <a
           href={link.url}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={link.label}
-          class="text-black/60 transition hover:text-black hover:scale-105"
+          class="flex flex-col items-center text-black/60 transition hover:text-black hover:scale-105"
         >
           {link.label === "Instagram" && (
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -47,14 +52,25 @@ const contact = await sanity.fetch(groq`
               <path d="M22 12a10 10 0 10-11.5 9.9v-7H7v-2.9h3.5V9.8c0-3.4 2-5.3 5-5.3 1.5 0 3 .3 3 .3v3.3h-1.7c-1.7 0-2.3 1.1-2.3 2.2v2.7H18l-.5 2.9h-3v7A10 10 0 0022 12z"/>
             </svg>
           )}
+          <span class="mt-1 text-xs">
+            {link.url
+              .replace("https://instagram.com/", "", "/")
+              .replace("https://www.instagram.com/", "", "/")
+              .replace("https://facebook.com/", "", "/")
+              .replace("https://www.facebook.com/", "", "/")
+              .replace("/", "")
+           }
+          </span>
         </a>
       ))}
     </div>
+    
+    <span class="mx-1"> </span>
 
     <!-- COPYRIGHT -->
-    <p class="mt-4 text-[11px] text-black/50">
-      © {new Date().getFullYear()}
-      <span class="mx-1"> </span>
+    <p class="mt-4 text-[12px] text-black/50">
+      © {new Date().getFullYear()} Hanna Karlsen
+      <span class="mx-2"> </span>
       <a href="/privacyPolicy" class="inline-block hover:underline text-black/65 transition duration-200 hover:-translate-y-px hover:text-black">
         Privacy Policy
       </a>

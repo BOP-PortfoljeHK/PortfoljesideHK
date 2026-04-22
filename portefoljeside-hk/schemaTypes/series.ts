@@ -76,6 +76,11 @@ export default defineType({
               type: "string",
             }),
             defineField({
+              name: "photo",
+              title: "If photo is taken by someone else, credit them here. Write it like this: [Photo: Photographer's Name]",
+              type: "string",
+            }),
+            defineField({
               name: "image",
               title: "Image",
               type: "image",
@@ -90,10 +95,10 @@ export default defineType({
               validation: (Rule) => Rule.required(),
             }),
             defineField({
-              name: "description",
-              title: "Description",
-              type: "array",
-              of: [{ type: "block" }],
+              name: "shortDescription",
+              title: "Short description for lightbox",
+              type: "string",
+              description: "This short description will be shown in the lightbox when the image is clicked.",
             }),
           ],
           preview: {

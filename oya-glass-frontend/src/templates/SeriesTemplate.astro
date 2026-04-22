@@ -12,6 +12,8 @@ const galleryItems =
     year: work.year,
     medium: work.medium,
     dimensions: work.dimensions,
+    shortDescription: work.shortDescription,
+    photo: work.photo,
     alt:
       typeof work?.image?.alt === "string" && work.image.alt.trim().length > 0
         ? work.image.alt
@@ -24,17 +26,20 @@ const galleryItems =
 Eks. når bruker klikker på en serie i kategorisiden. */}
 
 
+{/* Tittel til siden */}
 <Layout title={data.title}>
   <main class="mx-auto max-w-425 px-6 py-14 md:px-10 md:py-20">
     <section class="mx-auto mb-14 max-w-215 md:mb-18">
-      <p class="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-neutral-500">
+      <p class="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-neutral-600">
         Series
       </p>
 
+      {/* Tittel til siden */}
       <h1 class="mb-5 text-3xl leading-tight tracking-tight text-neutral-950 sm:text-4xl md:text-5xl">
         {data.title}
       </h1>
 
+        {/* Beskrivelse av serien, hvis det finnes */} 
       {data.description && (
         <div class="max-w-3xl">
           <PortableText value={data.description} />
@@ -42,6 +47,7 @@ Eks. når bruker klikker på en serie i kategorisiden. */}
       )}
     </section>
 
+    {/* Galleri med bilder fra serien */}
     {galleryItems.length > 0 && (
       <section class="grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 md:gap-y-14">
         {galleryItems.map((item: any, index: number) => {
@@ -49,12 +55,12 @@ Eks. når bruker klikker på en serie i kategorisiden. */}
 
           const previewUrl = urlFor(item.image).width(2200).height(1650).fit("crop").url();
           const zoomUrl = urlFor(item.image).width(2600).fit("max").url();
-          const meta = [item.year, item.medium, item.dimensions]
+          const meta = [item.year, item.medium, item.dimensions, item.photo]
             .filter(Boolean)
             .join(" · ");
 
           return (
-            <figure class="group">
+            <figure class="group"> 
               <button
                 type="button"
                 class="block w-full overflow-hidden bg-neutral-200"
@@ -63,24 +69,28 @@ Eks. når bruker klikker på en serie i kategorisiden. */}
                 data-lightbox-alt={item.alt}
                 data-lightbox-title={item.workTitle}
                 data-lightbox-meta={meta}
+                data-lightbox-description={item.shortDescription ?? ""}
                 aria-label={`Open for a larger view of ${item.workTitle}`}
               >
                 <img
                   src={previewUrl}
                   alt={item.alt}
                   loading="lazy"
-                  class="aspect-4/3 w-full object-cover transition duration-500 group-hover:scale-[1.015]"
+                  class="aspect-4/3 w-full object-cover transition duration-500 group-hover:scale-[1.05]"
                 />
               </button>
 
-              <figcaption class="mt-3 md:mt-4">
+              {/* Tittel for bildet, men kanskje overflødig derfor kommentert vekk */}
+
+              {/* <figcaption class="mt-3 md:mt-4">
                 <p class="text-xl leading-tight tracking-tight text-neutral-950 sm:text-2xl md:text-[1.7rem]">
                   {item.workTitle}
                 </p>
                 {meta && (
-                  <p class="mt-1 text-sm text-neutral-500">{meta}</p>
+                  <p class="mt-1 text-sm text-neutral-600">{meta}</p>
                 )}
-              </figcaption>
+              </figcaption> */}
+
             </figure>
           );
         })}
@@ -113,7 +123,8 @@ Eks. når bruker klikker på en serie i kategorisiden. */}
       <div class="mt-4 text-center">
         <p id="lightbox-caption" class="text-base font-medium text-white"></p>
         <p id="lightbox-meta" class="mt-1 text-sm text-white/70"></p>
-        <p id="lightbox-counter" class="mt-2 text-xs text-white/50"></p>
+        <p id="lightbox-description" class="mt-1 text-sm text-white/70"></p>
+        <p id="lightbox-counter" class="mt-2 text-xs text-white/60"></p>
       </div>
 
       <div class="mt-6 flex w-full items-center justify-between md:hidden">
@@ -154,6 +165,7 @@ Eks. når bruker klikker på en serie i kategorisiden. */}
     const lightboxImage = document.getElementById("lightbox-image") as HTMLImageElement | null;
     const lightboxCaption = document.getElementById("lightbox-caption");
     const lightboxMeta = document.getElementById("lightbox-meta");
+    const lightboxDescription = document.getElementById("lightbox-description");
     const lightboxCounter = document.getElementById("lightbox-counter");
 
     const closeButton = document.getElementById("lightbox-close");
@@ -173,17 +185,18 @@ Eks. når bruker klikker på en serie i kategorisiden. */}
       const alt = trigger.getAttribute("data-lightbox-alt") || "";
       const title = trigger.getAttribute("data-lightbox-title") || "";
       const meta = trigger.getAttribute("data-lightbox-meta") || "";
+      const description = trigger.getAttribute("data-lightbox-description") || "";
 
       currentIndex = index;
 
-      if (!lightboxImage || !lightboxCaption || !lightboxMeta || !lightboxCounter || !lightbox) return;
+      if (!lightboxImage || !lightboxCaption || !lightboxMeta || !lightboxCounter || !lightboxDescription || !lightbox) return;
 
       lightboxImage.src = src;
       lightboxImage.alt = alt;
       lightboxCaption.textContent = title;
       lightboxMeta.textContent = meta;
       lightboxCounter.textContent = `${index + 1} / ${triggers.length}`;
-
+      lightboxDescription.textContent = description;
       lightbox.classList.remove("hidden");
       lightbox.classList.add("flex");
       lightbox.setAttribute("aria-hidden", "false");
@@ -211,6 +224,7 @@ Eks. når bruker klikker på en serie i kategorisiden. */}
       if (lightboxImage) lightboxImage.src = "";
       if (lightboxCaption) lightboxCaption.textContent = "";
       if (lightboxMeta) lightboxMeta.textContent = "";
+      if (lightboxDescription) lightboxDescription.textContent = "";
       if (lightboxCounter) lightboxCounter.textContent = "";
 
       document.body.classList.remove("overflow-hidden");

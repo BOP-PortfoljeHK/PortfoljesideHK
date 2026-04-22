@@ -48,9 +48,9 @@ export default defineType({
       type: 'string',
     }),
     defineField({
-      name: 'availability',
-      title: 'Availability',
-      type: 'string',
+      name: "photo",
+      title: "Photo taken by",
+      type: "string",
     }),
     defineField({
       name: 'image',
