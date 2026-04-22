@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
-/* importerer egen font fra google fonts */
-
-html, body {
-    margin: 0;
-    height: 100%;
-    font-family: 'Roboto', sans-serif;
-    background-color: rgb(243, 239, 239);
+@layer base {
+  body {
+    font-size: 1.2rem;
+    font-family: 'Cambria', serif;
+    color: rgb(37, 37, 37);
+    background-color: #f6f1f1;
+  }
 }
 
 
