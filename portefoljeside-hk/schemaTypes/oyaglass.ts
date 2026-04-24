@@ -17,6 +17,13 @@ export default defineType({
     }),
 
     defineField({
+      name: "logo",
+      title: "Logo",
+      type: "image",
+      options: { hotspot: true },
+    }),
+
+    defineField({
       name: "images",
       title: "Images",
       type: "array",

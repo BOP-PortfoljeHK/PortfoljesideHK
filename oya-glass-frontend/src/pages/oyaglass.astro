@@ -7,6 +7,11 @@ import { sanity } from "../lib/sanityClient";
 const oyaglass = await sanity.fetch(groq`
   *[_type == "oyaglass"][0]{
     title,
+    logo{
+      asset->{
+        url
+      }
+    },
     images[]{
       asset->{
         url
@@ -21,12 +26,41 @@ const oyaglass = await sanity.fetch(groq`
 {/* Infoside om Øya Glass studio */}
 
 <Layout title={oyaglass?.title}>
-  <section class="mx-auto max-w-5xl space-y-10 px-4 py-16">
-    <h1 class="text-4xl">{oyaglass?.title}</h1>
+  <div class="flex justify-center mt-3">
+    {oyaglass?.logo && (
+        <img
+          src={oyaglass.logo.asset.url}
+          alt={`${oyaglass.title} logo`}
+          class="w-full max-w-lg md:max-w-2xl lg:max-w-none max-h-200 md:max-h-160 object-contain"
+        />
+    )}
+    </div>
 
-    <PortableText value={oyaglass?.bio} />
+  <section class="mx-auto max-w-7xl px-4 py-28">
+    <h1 class="text-4xl text-center mb-6">{oyaglass?.title}</h1>
+    
+    <div class="mx-auto max-w-3xl text-center mt-2 mb-16">
+      <div class="text-lg leading-relaxed">
+        <PortableText value={oyaglass?.bio} />
+      </div>
+    </div>
 
     {oyaglass?.images?.length > 0 && (
+      <div class="columns-1 sm:columns-1 md:columns-2 gap-3">
+        {oyaglass.images.map((image: any) => (
+          <img
+            src={image?.asset?.url}
+            alt={image?.alt || oyaglass?.title || "Øya glass studio"}
+            class="mb-4 w-full break-inside-avoid object-cover rounded"
+          />
+        ))}
+      </div>
+    )}
+  </section>
+</Layout>
+
+{/* gammel kode 
+{oyaglass?.images?.length > 0 && (
       <div class="mx-auto grid max-w-5xl gap-6 md:grid-cols-2">
         {oyaglass.images.map((image: any) => (
           <img
@@ -36,6 +70,5 @@ const oyaglass = await sanity.fetch(groq`
           />
         ))}
       </div>
-    )}
-  </section>
-</Layout>
+      
+*/}
