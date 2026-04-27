@@ -26,7 +26,7 @@ const oyaglass = await sanity.fetch(groq`
 {/* Infoside om Øya Glass studio */}
 
 <Layout title={oyaglass?.title}>
-  <div class="flex justify-center mt-3">
+  <div class="flex justify-center mt-5">
     {oyaglass?.logo && (
         <img
           src={oyaglass.logo.asset.url}
@@ -37,7 +37,7 @@ const oyaglass = await sanity.fetch(groq`
     </div>
 
   <section class="mx-auto max-w-7xl px-4 py-28">
-    <h1 class="text-4xl text-center mb-6">{oyaglass?.title}</h1>
+    <h1 class="mb-10 text-3xl leading-[1.1] text-center tracking-wide text-neutral-950 sm:text-4xl md:text-5xl">{oyaglass?.title}</h1>
     
     <div class="mx-auto max-w-3xl text-center mt-2 mb-16">
       <div class="text-lg leading-relaxed">
@@ -58,17 +58,3 @@ const oyaglass = await sanity.fetch(groq`
     )}
   </section>
 </Layout>
-
-{/* gammel kode 
-{oyaglass?.images?.length > 0 && (
-      <div class="mx-auto grid max-w-5xl gap-6 md:grid-cols-2">
-        {oyaglass.images.map((image: any) => (
-          <img
-            src={image?.asset?.url}
-            alt={image?.alt || oyaglass?.title || "Øya glass studio"}
-            class="aspect-4/3 w-full object-cover"
-          />
-        ))}
-      </div>
-      
-*/}

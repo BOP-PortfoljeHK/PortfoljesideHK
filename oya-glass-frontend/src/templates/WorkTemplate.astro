@@ -8,7 +8,7 @@ const { data } = Astro.props;
 const imageAlt =
   typeof data?.image?.alt === "string" && data.image.alt.trim().length > 0
     ? data.image.alt
-    : data?.title ?? "Verk";
+    : data?.title ?? "Work";
 
 const previewUrl = data?.image
   ? urlFor(data.image).width(1800).fit("max").url()
@@ -53,13 +53,17 @@ const meta = [data?.year, data?.medium, data?.dimensions]
       </div>
 
       <div class="lg:sticky lg:top-10">
-        <p class="mb-3 text-sm uppercase tracking-[0.2em] text-neutral-500">
+        <p class="mb-3 text-sm font-medium uppercase tracking-[0.3em] text-neutral-600">
           Work
         </p>
 
-        <h1 class="mb-4 text-4xl tracking-tight md:text-5xl">
+      <h1 class="mb-4 text-3xl leading-[1.1] tracking-wide text-neutral-950 sm:text-4xl md:text-5xl">
           {data.title}
-        </h1>
+      </h1>
+
+       <h2 class="mb-10 mt-2 text-xl font-medium tracking-wide text-neutral-600">
+        {data.year}
+      </h2>
 
         {meta && (
           <p class="mb-8 text-base leading-7 text-neutral-500">

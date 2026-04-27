@@ -29,19 +29,23 @@ Eks. når bruker klikker på en serie i kategorisiden. */}
 {/* Tittel til siden */}
 <Layout title={data.title}>
   <main class="mx-auto max-w-425 px-6 py-14 md:px-10 md:py-20">
-    <section class="mx-auto mb-14 max-w-215 md:mb-18">
+    <section class="mx-auto mb-10 max-w-215 md:mb-18">
       <p class="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-neutral-600">
         Series
       </p>
 
       {/* Tittel til siden */}
-      <h1 class="mb-5 text-3xl leading-tight tracking-tight text-neutral-950 sm:text-4xl md:text-5xl">
+      <h1 class="mb-4 text-3xl leading-[1.1] tracking-wide text-neutral-950 sm:text-4xl md:text-5xl">
         {data.title}
       </h1>
 
+      <h2 class="mb-10 mt-2 text-xl font-medium tracking-wide text-neutral-600">
+        {data.year}
+      </h2>
+
         {/* Beskrivelse av serien, hvis det finnes */} 
       {data.description && (
-        <div class="max-w-3xl">
+        <div class="max-w-4xl">
           <PortableText value={data.description} />
         </div>
       )}

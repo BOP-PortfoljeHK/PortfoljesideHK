@@ -38,15 +38,13 @@ function getYoutubeId(url: string | null | undefined) {
 <Layout title={howItsMadeVideo?.title ?? "Video"}>
   <main class="mx-auto max-w-5xl space-y-10 px-4 py-16">
     {howItsMadeVideo?.title && (
-      <div class="mb-8">
-        <h1 class="text-4xl mb-6">
+        <h1 class="mb-15 text-3xl leading-[1.1] text-center tracking-wide text-neutral-950 sm:text-4xl md:text-5xl">
           {howItsMadeVideo.title}
         </h1>
-      </div>
     )}
 
     {howItsMadeVideo?.description && (
-      <div class="max-w-3xl mb-16">
+      <div class="max-w-4xl mb-16">
         <PortableText value={howItsMadeVideo.description} />
       </div>
     )}
@@ -59,7 +57,7 @@ function getYoutubeId(url: string | null | undefined) {
 
         return (
           <section class="border-t border-gray-300 pt-12">
-            <div class="max-w-3xl space-y-5">
+            <div class="max-w-4xl space-y-5">
               {item.title && (
                 <h2 class="text-2xl md:text-[2rem] leading-tight font-normal">
                   {item.title}
