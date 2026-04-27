@@ -27,32 +27,9 @@ const meta = [data?.year, data?.medium, data?.dimensions]
 
 
 <Layout title={data.title}>
-  <main class="mx-auto max-w-7xl px-6 py-12 md:px-10">
-    <section class="grid gap-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] lg:items-start">
-      <div>
-        {previewUrl && zoomUrl && (
-          <figure class="group">
-            <button
-              type="button"
-              class="block w-full overflow-hidden"
-              data-lightbox-image={zoomUrl}
-              data-lightbox-alt={imageAlt}
-              data-lightbox-title={data.title}
-              data-lightbox-meta={meta}
-              aria-label={`Åpne større bilde av ${data.title}`}
-            >
-              <img
-                src={previewUrl}
-                alt={imageAlt}
-                loading="eager"
-                class="w-full object-cover shadow-sm transition duration-300 group-hover:scale-[1.01]"
-              />
-            </button>
-          </figure>
-        )}
-      </div>
-
-      <div class="lg:sticky lg:top-10">
+  <main class="mx-auto max-w-500 px-6 py-14 md:px-10 md:py-20">
+    <section class="mx-auto mb-10 max-w-215 md:mb-18">
+  
         <p class="mb-3 text-sm font-medium uppercase tracking-[0.3em] text-neutral-600">
           Work
         </p>
@@ -61,35 +38,51 @@ const meta = [data?.year, data?.medium, data?.dimensions]
           {data.title}
       </h1>
 
-       <h2 class="mb-10 mt-2 text-xl font-medium tracking-wide text-neutral-600">
+       <h2 class="mb-20 mt-2 text-xl font-medium tracking-wide text-neutral-600">
         {data.year}
       </h2>
 
-        {meta && (
-          <p class="mb-8 text-base leading-7 text-neutral-500">
-            {meta}
-          </p>
-        )}
-
         {data.description && (
-          <div class="max-w-3xl">
+          <div class="max-w-4xl">
             <PortableText value={data.description} />
           </div>
         )}
-      </div>
-    </section>
-  </main>
 
-  {/* Lightbox for å vise bilder i et stort vindu */}
+    </section>
+
+      <div class="mt-14 md:mt-20">
+        {previewUrl && zoomUrl && (
+          <figure class="group">
+            <button
+              type="button"
+              class="block w-full overflow-hidden focus:outline-none"
+              data-lightbox-image={zoomUrl}
+              data-lightbox-alt={imageAlt}
+              data-lightbox-title={data.title}
+              data-lightbox-meta={meta}
+              aria-label={`Open for a larger view of ${data.title}`}
+            >
+              <img
+                src={previewUrl}
+                alt={imageAlt}
+                loading="lazy"
+                class="w-full max-w-6xl mx-auto object-cover shadow-sm transition duration-500 group-hover:scale-[1.05]"
+              />
+            </button>
+          </figure>
+        )}
+      </div>
+
+        {/* Lightbox for å vise bilder i et stort vindu */}
   <div
     id="lightbox"
-    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 p-4"
+    class="fixed inset-0 z-10000 hidden items-center justify-center bg-black/95 px-4 py-6"
     aria-hidden="true"
   >
     <button
       id="lightbox-close"
       type="button"
-      class="absolute right-4 top-4 rounded-full bg-white/10 px-4 py-2 text-sm text-white backdrop-blur"
+      class="absolute right-4 top-4 rounded-full bg-white/10 px-4 py-2 text-sm text-white backdrop-blur transition hover:bg-white/20"
       aria-label="Close"
     >
       Close
@@ -100,7 +93,7 @@ const meta = [data?.year, data?.medium, data?.dimensions]
         id="lightbox-image"
         src=""
         alt=""
-        class="max-h-[80vh] max-w-[90vw] object-contain"
+        class="max-h-[70vh] w-auto max-w-full object-contain md:max-h-[80vh]"
       />
 
       <p
@@ -114,6 +107,8 @@ const meta = [data?.year, data?.medium, data?.dimensions]
       ></p>
     </div>
   </div>
+    
+  </main>
 
   {/* Lightbox-script for å kunne kjøre lightbox-funksjonaliteten */}
   <script>
@@ -138,6 +133,8 @@ const meta = [data?.year, data?.medium, data?.dimensions]
         lightboxCaption.textContent = title;
         lightboxMeta.textContent = meta;
 
+        document.body.classList.add("overflow-hidden");
+
         lightbox.classList.remove("hidden");
         lightbox.classList.add("flex");
         lightbox.setAttribute("aria-hidden", "false");
@@ -150,6 +147,9 @@ const meta = [data?.year, data?.medium, data?.dimensions]
       lightbox.classList.add("hidden");
       lightbox.classList.remove("flex");
       lightbox.setAttribute("aria-hidden", "true");
+
+      document.body.classList.remove("overflow-hidden");
+
       lightboxImage.setAttribute("src", "");
       lightboxImage.setAttribute("alt", "");
       lightboxCaption.textContent = "";
