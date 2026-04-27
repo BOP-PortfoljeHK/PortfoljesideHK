@@ -26,6 +26,13 @@ export default defineType({
       title: "Cover-bilde",
       type: "image",
       options: { hotspot: true },
+      fields: [
+        {
+          name: "alt",
+          title: "Alt-tekst",
+          type: "string",
+      }
+    ],
       validation: (Rule) => Rule.required(),
     }),
   ],

@@ -18,14 +18,17 @@ const query = groq`
   title,
   "slug": slug.current,
   description,
-  coverImage
+  coverImage{
+  ...,
+  alt
+  }
 }
 `;
 
 const categories: CategoryItem[] = await sanity.fetch(query);
 
 function getCategoryAlt(category: CategoryItem) {
-  return category.title;
+  return category.coverImage?.alt?.trim() || category.title;
 }
 ---
 
