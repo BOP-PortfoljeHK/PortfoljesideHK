@@ -2,10 +2,15 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
+{/* Takk-side, denne siden viser en enkel bekreftelse etter at brukeren har sendt en melding via kontaktskjemaet på nettsiden. 
+Meldingen sendes til en e-postadresse som er konfigurert i Sanity. Oppdragsgiver mottar denne eposten i samme format som er definert i kontaktskjemaet. */}
+
+
 <Layout>
     <section class="px-6 py-20 md:px-10 text-center">
         <div class="max-w-xl mx-auto space-y-8">
 
+            {/* Tittel, takk */}
             <h1 class="text-4xl font-semibold">
                 Thank you!
             </h1>
@@ -14,6 +19,7 @@ import Layout from '../layouts/Layout.astro';
                 Your message has been sent successfully. I will get back to you as soon as possible.
             </p>
 
+            {/* Knapp/lenke for å gå tilbake til hjemmesiden, via tekst */}
             <a href="/"
                 class="inline-block 
                        mt-6 

@@ -11,15 +11,21 @@ const privacyPolicy = await sanity.fetch(groq`
   }
 `);
 ---
+{/* Privacy Policy-side, denne siden viser en helt enkel side med privacy policy-informasjon. Denne kan også oppdateres via Sanity */}
 
+{/* Viser tittel for siden og enkel beskrivelse */}
 <Layout>
   <body class="bg-slate-950 text-neutral-800">
+
     <section class="mx-auto max-w-3xl px-6 py-16">
+
       <h1 class="mb-8 text-4xl font-semibold">
         {privacyPolicy?.title ?? 'Privacy Policy'}
       </h1>
 
       <PortableText value={privacyPolicy?.content} />
+      
     </section>
+
   </body>
 </Layout>

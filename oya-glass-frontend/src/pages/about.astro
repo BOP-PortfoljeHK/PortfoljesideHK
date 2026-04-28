@@ -14,6 +14,9 @@ const about = await sanity.fetch(groq`
 `);
 ---
 
+{/* Viser About-siden*/}
+
+{/* Siden bruker Layout-komponenten for å sette tittel og generell layout, og PortableText for å vise biografien som er skrevet i Sanity. */ }
 <Layout title={about.title}>
   <main>
     <section class="mx-auto max-w-5xl space-y-10 px-4 py-16">
@@ -24,6 +27,7 @@ const about = await sanity.fetch(groq`
           <PortableText value={about.bio} />
         </div>
 
+        {/* Portrettbilde  */}
         <div>
           <img
             src={about.portraitUrl}

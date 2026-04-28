@@ -17,6 +17,7 @@ const worksGridClass =
 
 {/* Denne siden viser innholdet for en spesifikk kategori, via slug fra Sanity */}
 
+{/* Tittel til siden og beskrivelse */}
 <Layout title={data.title}>
   <main class="mx-auto w-full max-w-350 px-4 py-16 md:px-10 md:py-24 lg:px-14">
     <section class="mb-16 md:mb-20">
@@ -31,6 +32,7 @@ const worksGridClass =
       )}
     </section>
 
+    {/* Viser serier som er tilknyttet kategorien */}
     {data.series?.length > 0 && (
       <section class="mb-20 md:mb-28">
         <h2 class="mb-8 text-[0.75rem] font-medium uppercase tracking-[0.28em] text-neutral-500 md:mb-10">
@@ -64,6 +66,7 @@ const worksGridClass =
       </section>
     )}
 
+      {/* Viser enkeltverk som er tilknyttet kategorien, men ikke nødvendigvis en serie */}
     {data.works?.length > 0 && (
       <section>
         <h2 class="mb-8 text-[0.75rem] font-medium uppercase tracking-[0.28em] text-neutral-500 md:mb-10">
