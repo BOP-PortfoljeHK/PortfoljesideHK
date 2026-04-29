@@ -18,7 +18,7 @@ const contact = await sanity.fetch(groq`
 
   <!-- IKONER -->
    <div class="mt-0 flex flex-col items-center gap-1">
-    <p class="text-xs uppercase tracking-widest font-semibold text-neutral-750"> Follow me</p>
+    <p class="text-sm uppercase tracking-widest font-semibold text-neutral-750"> Follow me</p>
 
     <div class="flex justify-center gap-4">
       {contact?.contact?.socialLinks?.map((link: any) => (
@@ -40,7 +40,7 @@ const contact = await sanity.fetch(groq`
               <path d="M22 12a10 10 0 10-11.5 9.9v-7H7v-2.9h3.5V9.8c0-3.4 2-5.3 5-5.3 1.5 0 3 .3 3 .3v3.3h-1.7c-1.7 0-2.3 1.1-2.3 2.2v2.7H18l-.5 2.9h-3v7A10 10 0 0022 12z"/>
             </svg>
           )}
-          <span class="mt-1 text-xs">
+          <span class="mt-1 text-xs text-neutral-800">
             {link.url
               .replace("https://instagram.com/", "", "/")
               .replace("https://www.instagram.com/", "", "/")
@@ -56,10 +56,10 @@ const contact = await sanity.fetch(groq`
     <span class="mx-1"> </span>
 
     <!-- COPYRIGHT -->
-    <p class="mt-4 text-[12px] text-black/50">
+    <p class="mt-4 text-[13px] text-neutral-800">
       © {new Date().getFullYear()} Hanna Karlsen
       <span class="mx-2"> </span>
-      <a href="/privacyPolicy" class="inline-block hover:underline text-black/65 transition duration-200 hover:-translate-y-px hover:text-black">
+      <a href="/privacyPolicy" class="inline-block hover:underline text-neutral-800 transition duration-200 hover:-translate-y-px hover:text-neutral-950">
         Privacy Policy
       </a>
     </p>
