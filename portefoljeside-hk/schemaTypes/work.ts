@@ -12,12 +12,14 @@ export default defineType({
     defineField({
       name: 'title',
       title: 'Title',
+      description: "The title of the work.",
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'slug',
       title: 'Slug',
+      description: "The slug is used in the URL for the work's page. It should be unique and descriptive.",
       type: 'slug',
       options: {
         source: 'title',
@@ -28,6 +30,7 @@ export default defineType({
     defineField({
       name: 'category',
       title: 'Category',
+      description: "The category this work belongs to.",
       type: 'reference',
       to: [{type: 'category'}],
       validation: (Rule) => Rule.required(),
@@ -35,21 +38,25 @@ export default defineType({
     defineField({
       name: 'year',
       title: 'Year',
+      description: "The year the work was created or first exhibited.",
       type: 'number',
     }),
     defineField({
       name: 'medium',
       title: 'Medium',
+      description: "The medium used to create the work.",
       type: 'string',
     }),
     defineField({
       name: 'dimensions',
       title: 'Dimensions',
+      description: "The dimensions of the work, typically in the format 'Height x Width x Depth cm'.",
       type: 'string',
     }),
     defineField({
       name: "photo",
       title: "Photo taken by",
+      description: "Credit for the photo of the work, if applicable.",
       type: "string",
     }),
     defineField({
@@ -61,6 +68,7 @@ export default defineType({
         defineField({
           name: 'alt',
           title: 'Alt-tekst',
+          description: "A description of the image for accessibility purposes.",
           type: 'string',
         }),
       ],
@@ -69,6 +77,7 @@ export default defineType({
     defineField({
       name: 'description',
       title: 'Description',
+      description: "A detailed description of the work.",
       type: 'array',
       of: [{type: 'block'}],
     }),

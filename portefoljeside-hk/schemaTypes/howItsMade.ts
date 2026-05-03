@@ -11,12 +11,14 @@ export const howItsMadeVideo = defineType({
     defineField({
       name: 'title',
       title: 'Page title',
+      description: 'The title of the page, e.g. "How It’s Made".',
       type: 'string',
     }),
 
     defineField({
       name: 'description',
       title: 'Description',
+      description: 'A short description of the page, e.g. "Behind the scenes of the projects".',
       type: 'array',
       of: [{ type: 'block' }],
     }),
@@ -24,68 +26,12 @@ export const howItsMadeVideo = defineType({
     defineField({
       name: 'videos',
       title: 'Media sections',
+      description: 'List of video sections to display on the page.',
       type: 'array',
       of: [
         {
-          type: 'object',
-          name: 'youtubeVideoItem',
-          title: 'Video section',
-          fields: [
-
-            defineField({
-              name: 'title',
-              title: 'Video title',
-              type: 'string',
-            }),
-
-            defineField({
-              name: 'description',
-              title: 'Description',
-              type: 'array',
-              of: [{ type: 'block' }],
-            }),
-
-            defineField({
-              name: 'youtubeUrl',
-              title: 'YouTube URL',
-              type: 'url',
-            }),
-
-            defineField({
-              name: 'images',
-              title: 'Images',
-              type: 'array',
-              of: [
-                {
-                  type: 'image',
-                  options: { hotspot: true },
-                  fields: [
-
-                    defineField({
-                      name: 'alt',
-                      title: 'Alt-text',
-                      type: 'string',
-                    }),
-
-                    defineField({
-                      name: 'title',
-                      title: 'Image title',
-                      type: 'string',
-                    }),
-
-                    defineField({
-                      name: 'description',
-                      title: 'Description',
-                      type: 'text',
-                      rows: 3,
-                    }),
-
-                  ],
-                },
-              ],
-            }),
-
-          ],
+          type: 'youtubeVideoItem',
+        
           preview: {
             select: {
               title: 'title',
