@@ -26,7 +26,7 @@ export const howItsMadeVideo = defineType({
     defineField({
       name: 'videos',
       title: 'Media sections',
-      description: 'List of video sections to display on the page.',
+      description: 'This is where you can add individual media + descriptions for the "How It’s Made" page. You can add as many sections as you like, and they will be displayed in the order you add them.',
       type: 'array',
       of: [
         {

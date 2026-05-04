@@ -31,9 +31,21 @@ export default defineType({
       title: "Images",
       description: "A collection of images related to Øya glass studio.",
       type: "array",
-      of: [{ type: "image", options: { hotspot: true } }],
+      of: [
+        {
+          type: "image",
+          options: { hotspot: true },
+          fields: [
+            {
+              name: "alt",
+              title: "Alt Text",
+              type: "string",
+              description: "Alternative text for the image, used for accessibility.",
+            },
+          ],
+        },
+      ],
     }),
-
     defineField({
       name: "bio",
       title: "Bio",

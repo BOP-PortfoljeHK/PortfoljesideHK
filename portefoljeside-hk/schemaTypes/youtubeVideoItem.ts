@@ -44,9 +44,15 @@ export const youtubeVideoItem = defineType({
       options: { hotspot: true },
       fields: [
         defineField({
+          name: 'title',
+          title: 'Title',
+          description: 'A title for the image, displayed in the media section.',
+          type: 'string',
+        }),
+        defineField({
           name: 'alt',
-          title: 'Alt text',
-          description: 'Alternative text for the image, used for accessibility.',
+          title: 'alt text',
+          description: 'This is important for accessibility and SEO. Describe the content of the image in a clear and concise way.',
           type: 'string',
         }),
       ],
