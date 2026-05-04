@@ -85,11 +85,15 @@ const worksGridClass =
                 </h3>
               </div>
 
-              {work.image && (
+             {work.image && (
                 <div class="overflow-hidden bg-neutral-200">
                   <img
-                    src={urlFor(work.image).width(2800).height(1800).fit("crop").url()}
-                    alt={work.image?.alt || work.title}
+                    src={urlFor(work.image || work.images?.[0])
+                      .width(2800)
+                      .height(1800)
+                      .fit("crop")
+                      .url()}
+                    alt={(work.image?.alt || work.images?.[0]?.alt) || work.title}
                     class="aspect-16/10 w-full object-cover transition duration-700 ease-out group-hover:scale-[1.05]"
                   />
                 </div>

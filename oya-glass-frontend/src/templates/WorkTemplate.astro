@@ -5,22 +5,28 @@ import PortableText from "../components/PortableText.astro";
 
 const { data } = Astro.props;
 
-const imageAlt =
-  typeof data?.image?.alt === "string" && data.image.alt.trim().length > 0
-    ? data.image.alt
-    : data?.title ?? "Work";
+const images =
+  Array.isArray(data?.images) && data.images.length > 0
+    ? data.images
+    : data?.image
+      ? [data.image]
+      : [];
 
-const previewUrl = data?.image
-  ? urlFor(data.image).width(1800).fit("max").url()
-  : null;
+const galleryImages = images
+  .filter((image: any) => image)
+  .map((image: any) => {
+    const alt =
+      typeof image?.alt === "string" && image.alt.trim().length > 0
+        ? image.alt
+        : data?.title ?? "Work";
 
-const zoomUrl = data?.image
-  ? urlFor(data.image).width(2600).fit("max").url()
-  : null;
-
-const meta = [data?.year, data?.medium, data?.dimensions]
-  .filter(Boolean)
-  .join(" · ");
+    return {
+      image,
+      alt,
+      previewUrl: urlFor(image).width(1800).fit("max").url(),
+      zoomUrl: urlFor(image).width(2600).fit("max").url(),
+    };
+  });
 ---
 
 {/* "Mal-side" for å vise enkeltverk basert på slug fra Sanity */}
@@ -53,29 +59,41 @@ const meta = [data?.year, data?.medium, data?.dimensions]
 
     </section>
 
-    {/* Bildevisning, dette er bildet man ser når man først kommer inn på siden */}
-      <div class="mt-14 md:mt-20">
-        {previewUrl && zoomUrl && (
-          <figure class="group">
-            <button
-              type="button"
-              class="block w-full overflow-hidden focus:outline-none"
-              data-lightbox-image={zoomUrl}
-              data-lightbox-alt={imageAlt}
-              data-lightbox-title={data.title}
-              data-lightbox-meta={meta}
-              aria-label={`Open for a larger view of ${data.title}`}
-            >
-              <img
-                src={previewUrl}
-                alt={imageAlt}
-                loading="lazy"
-                class="w-full max-w-6xl mx-auto object-cover shadow-sm transition duration-500 group-hover:scale-[1.05]"
-              />
-            </button>
-          </figure>
-        )}
-      </div>
+    {/* Bildevisning */}
+<div class="mt-14 md:mt-20">
+  {galleryImages.length > 0 && (
+    <section
+      class={`grid gap-x-8 gap-y-12 md:gap-y-14 mx-auto ${
+        galleryImages.length === 1
+          ? "grid-cols-1 max-w-6xl"
+          : galleryImages.length === 2
+            ? "grid-cols-1 md:grid-cols-2 max-w-6xl"
+            : "grid-cols-1 md:grid-cols-3 max-w-7xl"
+      }`}
+    >
+      {galleryImages.map((item: any) => (
+        <figure class="group">
+          <button
+            type="button"
+            class="block w-full overflow-hidden focus:outline-none"
+            data-lightbox-image={item.zoomUrl}
+            data-lightbox-alt={item.alt}
+            data-lightbox-title={data.title}
+            data-lightbox-meta={data.year ?? ""}
+            aria-label={`Open for a larger view of ${data.title}`}
+          >
+            <img
+              src={item.previewUrl}
+              alt={item.alt}
+              loading="lazy"
+              class="w-full object-cover shadow-sm transition duration-500 group-hover:scale-[1.05]"
+            />
+          </button>
+        </figure>
+      ))}
+    </section>
+  )}
+</div>
 
         {/* Lightbox for å vise bilder i et stort vindu */}
   <div

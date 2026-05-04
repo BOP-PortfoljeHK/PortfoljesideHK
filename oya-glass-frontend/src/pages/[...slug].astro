@@ -138,7 +138,7 @@ if (len === 1) {
         year,
         medium,
         dimensions,
-        image{
+        "image":coalesce(image, images[0]){
           ...,
           alt
         }
@@ -204,6 +204,10 @@ else if (len === 2) {
         dimensions,
         availability,
         image{
+          ...,
+          alt
+        },
+        images[] {
           ...,
           alt
         },

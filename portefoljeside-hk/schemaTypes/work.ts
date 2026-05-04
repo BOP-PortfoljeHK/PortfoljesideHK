@@ -1,9 +1,5 @@
 import {defineField, defineType} from 'sanity'
 
-{/* Definerer en Sanity-skjema for "work" eller enkeltarbeider (kunstverk) med ulike felt som tittel, 
-  kategori, år, medium, dimensjoner, tilgjengelighet, bilde og beskrivelse. Skjemaet inkluderer også en forhåndsvisning
-  av hvordan dokumentet skal vises i Sanity-studioet. */}
-
 export default defineType({
   name: 'work',
   title: 'Work',
@@ -36,6 +32,21 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'description',
+      title: 'Description',
+      description: "A detailed description of the work.",
+      type: 'array',
+      of: [{type: 'block'}],
+    }),
+    defineField({
+      name: "coverImage",
+      title: "Cover-bilde",
+      description: "This image will be used as the cover image for the work.",
+      type: "image",
+      options: { hotspot: true },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: 'year',
       title: 'Year',
       description: "The year the work was created or first exhibited.",
@@ -60,40 +71,37 @@ export default defineType({
       type: "string",
     }),
     defineField({
-      name: 'image',
-      title: 'Image',
-      type: 'image',
-      options: {hotspot: true},
-      fields: [
-        defineField({
-          name: 'alt',
-          title: 'Alt-tekst',
-          description: "A description of the image for accessibility purposes.",
-          type: 'string',
-        }),
-      ],
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'description',
-      title: 'Description',
-      description: "A detailed description of the work.",
+      name: 'images',
+      title: 'Images',
+      description: 'Images of the work in the series.',
       type: 'array',
-      of: [{type: 'block'}],
+      of: [{
+        type: 'image',
+        options: { hotspot: true },
+        fields: [
+          defineField({
+            name: 'alt',
+            title: 'Alt-tekst',
+            description: 'A description of the image for accessibility purposes.',
+            type: 'string',
+          }),
+        ],
+      }],
+      validation: (Rule) => Rule.required(),
     }),
   ],
   preview: {
     select: {
       title: 'title',
+      subtitle: 'year',
       media: 'image',
-      subtitle: 'medium',
     },
-    prepare({title, media, subtitle}) {
+    prepare({ title, subtitle, media }) {
       return {
         title: title || 'No title',
+        subtitle: subtitle ? `Series · ${subtitle}` : 'Series',
         media,
-        subtitle: subtitle || 'Single work',
-      }
+      };
     },
   },
-})
+});
