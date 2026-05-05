@@ -6,16 +6,19 @@ import { defineField, defineType } from 'sanity';
 export const youtubeVideoItem = defineType({
   name: 'youtubeVideoItem',
   title: 'Media section',
+  description: 'A section for either a YouTube video or images, used in the "How It’s Made" page.',
   type: 'object',
   fields: [
     defineField({
       name: 'title',
       title: 'Title',
+      description: 'The title of the video or image section.',
       type: 'string',
     }),
     defineField({
       name: 'description',
       title: 'Description',
+      description: 'A short description of the video or image section.',
       type: 'array',
       of: [{ type: 'block' }],
     }),
@@ -33,6 +36,7 @@ export const youtubeVideoItem = defineType({
    defineField({
   name: 'images',
   title: 'Images',
+  description: 'Optional field for images, if you want to include images',
   type: 'array',
   of: [
     {
@@ -40,8 +44,15 @@ export const youtubeVideoItem = defineType({
       options: { hotspot: true },
       fields: [
         defineField({
+          name: 'title',
+          title: 'Title',
+          description: 'A title for the image, displayed in the media section.',
+          type: 'string',
+        }),
+        defineField({
           name: 'alt',
-          title: 'Alt text',
+          title: 'alt text',
+          description: 'This is important for accessibility and SEO. Describe the content of the image in a clear and concise way.',
           type: 'string',
         }),
       ],

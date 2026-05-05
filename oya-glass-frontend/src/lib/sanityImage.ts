@@ -9,9 +9,17 @@ import { sanity } from "./sanityClient";
 const builder = createImageUrlBuilder(sanity);
 
 export function urlFor(source: SanityImageSource) {
-  return builder.image(source).auto("format");
+  return builder
+    .image(source)
+    .auto("format")
+    .quality(80);
 }
 
-export function buildSrcset(source: SanityImageSource, widths = [320, 480, 640, 800, 1024, 1280, 1600]) {
-  return widths.map((w) => `${urlFor(source).width(w).fit("max").url()} ${w}w`).join(", ");
+export function buildSrcset(
+  source: SanityImageSource,
+  widths = [320, 480, 640, 800, 1024, 1280, 1600]
+) {
+  return widths
+    .map((w) => `${urlFor(source).width(w).fit("max").url()} ${w}w`)
+    .join(", ");
 }

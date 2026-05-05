@@ -42,8 +42,10 @@ export async function getStaticPaths() {
     }
   }`;
 
+  /** Hent rutedata fra Sanity */
   const routeData = await sanity.fetch(query);
 
+  /** Henter route for kategorier */
   const categoryPaths = (routeData?.categories ?? [])
     .map((c: any) => c?.category)
     .filter((value: any) => typeof value === "string" && value.length > 0)
@@ -51,6 +53,7 @@ export async function getStaticPaths() {
       params: { slug: category },
     }));
 
+    /** Henter route for serier */
   const seriesPaths = (routeData?.series ?? [])
     .map((s: any) => ({
       category: s?.category,
@@ -67,6 +70,7 @@ export async function getStaticPaths() {
       params: { slug: `${s.category}/${s.series}` },
     }));
 
+    /** Henter route for enkeltverk */
   const workPaths = (routeData?.works ?? [])
     .map((w: any) => ({
       category: w?.category,
@@ -89,9 +93,8 @@ export async function getStaticPaths() {
 const slugStr = Astro.params.slug;
 const segments = typeof slugStr === "string" ? slugStr.split("/") : [];
 
-/** --------
- * Runtime: finn side basert på segments
- * -------- */
+
+/** - Runtime: finn side basert på segments */
 
 const len = segments.length;
 const [categorySlug, second] = segments;
@@ -135,7 +138,7 @@ if (len === 1) {
         year,
         medium,
         dimensions,
-        image{
+        "image":coalesce(image, images[0]){
           ...,
           alt
         }
@@ -204,6 +207,10 @@ else if (len === 2) {
           ...,
           alt
         },
+        images[] {
+          ...,
+          alt
+        },
         description,
         category->{title, "slug": slug.current}
       }`,
@@ -221,6 +228,8 @@ else if (len === 2) {
 if (!data || !pageType) {
   Astro.response.status = 404;
 }
+
+// Sjekker om det er en gyldig side, og viser riktig template basert på pageType. Hvis ingen av sidene matcher, vises 404.
 ---
 
 {Astro.response.status === 404 ? (

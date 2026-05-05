@@ -17,10 +17,11 @@ const worksGridClass =
 
 {/* Denne siden viser innholdet for en spesifikk kategori, via slug fra Sanity */}
 
+{/* Tittel til siden og beskrivelse */}
 <Layout title={data.title}>
   <main class="mx-auto w-full max-w-350 px-4 py-16 md:px-10 md:py-24 lg:px-14">
     <section class="mb-16 md:mb-20">
-      <h1 class="text-4xl leading-none tracking-tight text-neutral-950 sm:text-5xl md:text-6xl">
+      <h1 class="text-4xl leading-[1.1] tracking-wide text-neutral-950 sm:text-5xl md:text-6xl">
         {data.title}
       </h1>
 
@@ -31,6 +32,7 @@ const worksGridClass =
       )}
     </section>
 
+    {/* Viser serier som er tilknyttet kategorien */}
     {data.series?.length > 0 && (
       <section class="mb-20 md:mb-28">
         <h2 class="mb-8 text-[0.75rem] font-medium uppercase tracking-[0.28em] text-neutral-500 md:mb-10">
@@ -64,6 +66,7 @@ const worksGridClass =
       </section>
     )}
 
+      {/* Viser enkeltverk som er tilknyttet kategorien, men ikke nødvendigvis en serie */}
     {data.works?.length > 0 && (
       <section>
         <h2 class="mb-8 text-[0.75rem] font-medium uppercase tracking-[0.28em] text-neutral-500 md:mb-10">
@@ -82,11 +85,15 @@ const worksGridClass =
                 </h3>
               </div>
 
-              {work.image && (
+             {work.image && (
                 <div class="overflow-hidden bg-neutral-200">
                   <img
-                    src={urlFor(work.image).width(2800).height(1800).fit("crop").url()}
-                    alt={work.image?.alt || work.title}
+                    src={urlFor(work.image || work.images?.[0])
+                      .width(2800)
+                      .height(1800)
+                      .fit("crop")
+                      .url()}
+                    alt={(work.image?.alt || work.images?.[0]?.alt) || work.title}
                     class="aspect-16/10 w-full object-cover transition duration-700 ease-out group-hover:scale-[1.05]"
                   />
                 </div>

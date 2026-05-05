@@ -11,6 +11,7 @@ export default defineType({
     defineField({
       name: "title",
       title: "Tittel",
+      description: "Title for the contact page. This will be displayed as the main heading on the page.",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
@@ -18,6 +19,7 @@ export default defineType({
     defineField({
       name: "intro",
       title: "Introtekst",
+      description: "Introduction text for the contact page.",
       type: "array",
       of: [{ type: "block" }],
     }),
@@ -25,11 +27,13 @@ export default defineType({
     defineField({
       name: "contact",
       title: "Kontaktinfo",
+      description: "Contact information for the contact page.",
       type: "object",
       fields: [
         defineField({
           name: "name",
           title: "Navn",
+          description: "Name of the contact person or organization.",
           type: "string",
           validation: (Rule) => Rule.required(),
         }),
@@ -37,6 +41,7 @@ export default defineType({
       defineField({
           name: "email",
           title: "E-post",
+          description: "Email address for the contact person or organization.",
           type: "string",
           validation: (Rule) =>
             Rule.required().custom((value) => {
@@ -50,6 +55,7 @@ export default defineType({
       defineField({
         name: "phone",
         title: "Telefon",
+        description: "Phone number for the contact person or organization.",
         type: "string",
       }),  
 

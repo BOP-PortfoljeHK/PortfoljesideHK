@@ -5,6 +5,7 @@ import { defineField, defineType } from "sanity";
 export default defineType({
   name: "oyaglass",
   title: "Øya glass studio",
+  description: "Content for the Øya glass studio section, including title, images, and bio.",
   type: "document",
 
 
@@ -12,6 +13,7 @@ export default defineType({
     defineField({
       name: "title",
       title: "Title",
+      description: "The title of the section, e.g. 'Øya glass studio'.",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
@@ -19,6 +21,7 @@ export default defineType({
     defineField({
       name: "logo",
       title: "Logo",
+      description: "The logo image for Øya glass studio.",
       type: "image",
       options: { hotspot: true },
     }),
@@ -26,25 +29,27 @@ export default defineType({
     defineField({
       name: "images",
       title: "Images",
+      description: "A collection of images related to Øya glass studio.",
       type: "array",
       of: [
-        { 
-          type: "image", 
-          options: { hotspot: true }, 
+        {
+          type: "image",
+          options: { hotspot: true },
           fields: [
             {
               name: "alt",
-              title: "Alt-tekst",
+              title: "Alt Text",
               type: "string",
-            }
-          ]
-        }
+              description: "Alternative text for the image, used for accessibility.",
+            },
+          ],
+        },
       ],
     }),
-
     defineField({
       name: "bio",
       title: "Bio",
+      description: "A brief biography of the Øya glass studio.",
       type: "array",
       of: [{ type: "block" }],
       validation: (Rule) => Rule.required(),

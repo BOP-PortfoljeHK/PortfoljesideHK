@@ -35,22 +35,23 @@ function getYoutubeId(url: string | null | undefined) {
 
 {/* Denne siden viser "How it's made" på nettsiden, viser beskrivelse av prosessen, ved tekst, bilder og/eller videoer */}
 
+{/* Tittel for siden og heading med tittel i */}
 <Layout title={howItsMadeVideo?.title ?? "Video"}>
   <main class="mx-auto max-w-5xl space-y-10 px-4 py-16">
     {howItsMadeVideo?.title && (
-      <div class="mb-8">
-        <h1 class="text-4xl mb-6">
+        <h1 class="mb-15 leading-[1.1] text-center tracking-wide text-neutral-950 text-4xl md:text-5xl">
           {howItsMadeVideo.title}
         </h1>
-      </div>
     )}
 
+{/* Beskrivelse av prosessen, fra Sanity */}
     {howItsMadeVideo?.description && (
-      <div class="max-w-3xl mb-16">
+      <div class="max-w-4xl mb-16">
         <PortableText value={howItsMadeVideo.description} />
       </div>
     )}
 
+    {/* Viser video og bilder, dersom det finnes. Dette hentes også fra Sanity */}
     <div class="space-y-24">
       {howItsMadeVideo?.videos?.map((item: any, sectionIndex: number) => {
         const videoId = getYoutubeId(item.youtubeUrl);
@@ -59,9 +60,9 @@ function getYoutubeId(url: string | null | undefined) {
 
         return (
           <section class="border-t border-gray-300 pt-12">
-            <div class="max-w-3xl space-y-5">
+            <div class="max-w-4xl space-y-5">
               {item.title && (
-                <h2 class="text-2xl md:text-[2rem] leading-tight font-normal">
+                <h2 class="text-4xl md:text-5xl leading-tight font-semibold tracking-wide">
                   {item.title}
                 </h2>
               )}
@@ -73,6 +74,7 @@ function getYoutubeId(url: string | null | undefined) {
               )}
             </div>
 
+            {/* Video and image container */}
             {(hasVideo || hasImages) && (
               <div class="mt-10 max-w-4xl space-y-6">
                 {hasVideo && (
@@ -90,6 +92,7 @@ function getYoutubeId(url: string | null | undefined) {
                   </div>
                 )}
 
+                  {/* Dersom det kun er bilder */}
                 {hasImages &&
                   (item.images.length === 1 ? (
                     <div class="max-w-4xl">
@@ -108,7 +111,7 @@ function getYoutubeId(url: string | null | undefined) {
                           <img
                             src={item.images[0].asset.url}
                             alt={item.images[0].alt || item.title || ""}
-                            class="w-full max-h-[70vh] object-contain transition duration-200 group-hover:opacity-95"
+                            class="w-full max-h-[70vh] object-contain transition duration-500 hover:scale-105"
                           />
                         </div>
                       </button>
@@ -131,7 +134,7 @@ function getYoutubeId(url: string | null | undefined) {
                             <img
                               src={img.asset.url}
                               alt={img.alt || item.title || ""}
-                              class="w-full aspect-4/5 object-cover transition duration-200 group-hover:opacity-95"
+                              class="w-full aspect-square object-cover transition duration-500 hover:scale-105"
                             />
                           </div>
                         </button>
@@ -146,6 +149,7 @@ function getYoutubeId(url: string | null | undefined) {
     </div>
   </main>
 
+  {/* Lightbox for å vise bilder i et stort vindu */}
   <div
     id="lightbox"
     class="fixed inset-0 z-99999 hidden bg-black/90 p-4 md:p-8"

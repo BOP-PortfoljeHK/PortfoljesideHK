@@ -7,10 +7,10 @@ const { categories = [] } = Astro.props;
   <div class="w-full px-4 pxc-6 md:px-8">
     <nav class="flex items-center justify-between">
       <div class="flex flex-col">
-      <a href="/" class="text-[2.3rem] tracking-wide text-black no-underline hover:opacity-70 transition transform hover:scale-105">
+      <a href="/" class="text-[2.4rem] tracking-wide text-black no-underline transition transform hover:scale-105">
         Hanna Karlsen
       </a>
-      <p class="text-sm font-bold uppercase tracking-wide text-black/60">
+      <p class="text-base font-bold uppercase tracking-wider text-neutral-600">
         Glass artist
       </p>
       </div>
@@ -28,7 +28,7 @@ const { categories = [] } = Astro.props;
         <div class="relative group">
           <a
             href="/work"
-            class={`inline-block text-black no-underline text-base md:text-lg font-medium tracking-wide transition transform hover:opacity-70 hover:scale-105 ${
+            class={`inline-block text-black no-underline text-base md:text-lg font-medium tracking-wide transition transform hover:scale-105 ${
               currentPath === "/work" ||
               categories.some((category: { slug: any }) => currentPath === `/${category.slug}`)
                 ? "underline"
@@ -42,7 +42,7 @@ const { categories = [] } = Astro.props;
             {categories.map((category: { slug: any; title: unknown }) => (
               <a
                 href={`/${category.slug}`}
-                class={`block py-1 text-base no-underline transition hover:opacity-70 hover:scale-105 ${
+                class={`block py-1 text-base no-underline transition hover:scale-105 ${
                   currentPath === `/${category.slug}`
                     ? "underline"
                     : "hover:underline"
@@ -57,7 +57,7 @@ const { categories = [] } = Astro.props;
         {/* Statisk meny for "faste sider" */}
         <a
           href="/oyaglass"
-          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:opacity-70 hover:scale-105 ${
+          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:scale-105 ${
             currentPath === "/oyaglass" ? "underline" : ""
           }`}
         >
@@ -66,7 +66,7 @@ const { categories = [] } = Astro.props;
 
         <a
           href="/howItsMade"
-          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:opacity-70 hover:scale-105 ${
+          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:scale-105 ${
             currentPath === "/howItsMade" ? "underline" : ""
           }`}
           >
@@ -75,7 +75,7 @@ const { categories = [] } = Astro.props;
 
         <a
           href="/about"
-          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:opacity-70 hover:scale-105 ${
+          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:scale-105 ${
             currentPath === "/about" ? "underline" : ""
           }`}
         >
@@ -84,7 +84,7 @@ const { categories = [] } = Astro.props;
 
         <a
           href="/contact"
-          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:opacity-70 hover:scale-105 ${
+          class={`text-black no-underline text-base md:text-lg font-medium tracking-wide transition hover:scale-105 ${
             currentPath === "/contact" ? "underline" : ""
           }`}
         >
@@ -104,16 +104,16 @@ const { categories = [] } = Astro.props;
       {categories.map((category: { slug: any; title: unknown }) => (
         <a
           href={`/${category.slug}`}
-          class="text-black no-underline hover:underline pl-4 transition hover:opacity-70 hover:scale-105"
+          class="text-black no-underline hover:underline pl-4 transition hover:scale-105"
         >
           {category.title}
         </a>
       ))}
 
-      <a href="/oyaglass" class="text-black no-underline hover:underline transition hover:opacity-70 hover:scale-105">Øya glass studio</a>
-      <a href="/howItsMade" class="text-black no-underline hover:underline transition hover:opacity-70 hover:scale-105">How It's Made</a>
-      <a href="/about" class="text-black no-underline hover:underline transition hover:opacity-70 hover:scale-105">About</a>
-      <a href="/contact" class="text-black no-underline hover:underline transition hover:opacity-70 hover:scale-105">Contact</a>
+      <a href="/oyaglass" class="text-black no-underline hover:underline transition hover:scale-105">Øya glass studio</a>
+      <a href="/howItsMade" class="text-black no-underline hover:underline transition hover:scale-105">How It's Made</a>
+      <a href="/about" class="text-black no-underline hover:underline transition hover:scale-105">About</a>
+      <a href="/contact" class="text-black no-underline hover:underline transition hover:scale-105">Contact</a>
     </div>
   </nav>
 </header>
