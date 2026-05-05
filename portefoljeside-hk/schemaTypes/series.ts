@@ -53,6 +53,14 @@ export default defineType({
       description: "This image will be used as the cover image for the series.",
       type: "image",
       options: { hotspot: true },
+       fields: [
+        {
+          name: "alt",
+          title: "Alt-tekst",
+          description: "A description of the cover image for accessibility purposes.",
+          type: "string",
+      }
+    ],
       validation: (Rule) => Rule.required(),
     }),
     defineField({

@@ -34,16 +34,11 @@ export default defineType({
         {
           name: "alt",
           title: "Alt-tekst",
+          description: "A description of the cover image for accessibility purposes.",
           type: "string",
       }
     ],
       validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "alttext",
-      title: "Alt-tekst",
-      description: "A description of the cover image for accessibility purposes.",
-      type: "string",
     }),
   ],
   preview: {
