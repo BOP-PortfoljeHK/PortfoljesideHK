@@ -15,13 +15,14 @@ const { categories = [] } = Astro.props;
       </p>
       </div>
 
-      {/* Desktop meny */}
+      {/* Mobilmeny knapp*/}
       <button id="menu-toggle" class="md:hidden flex flex-col justify-center items-center w-10 h-10" aria-label="Toggle mobile menu">
         <span class="line block w-6 h-0.5 bg-black mb-1 transition duration-300"></span>
         <span class="line block w-6 h-0.5 bg-black mb-1 transition duration-300"></span>
         <span class="line block w-6 h-0.5 bg-black mb-1 transition duration-300"></span>
       </button>
 
+      {/* Desktop meny */}
       {/* Viser dynamisk meny for kategorier, slug-sider */}
       <div class="hidden md:flex items-center space-x-8 ml-auto">
         <div class="relative group">
@@ -94,7 +95,7 @@ const { categories = [] } = Astro.props;
   </div>
 
 
-  {/* Mobilmeny */}
+  {/* Mobilmeny dropdown som vises ved klikk*/}
  
   <nav id="mobile-menu" class="hidden md:hidden absolute right-4 top-full mt-2 bg-neutral-100/98 px-6 py-4 shadow-lg">
     <div class="flex flex-col space-y-3">

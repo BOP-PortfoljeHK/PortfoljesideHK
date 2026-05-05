@@ -7,7 +7,12 @@ import PortableText from "../components/PortableText.astro";
 const about = await sanity.fetch(groq`
     *[_type == "about"][0]{
         title,
-        "portraitUrl": portrait.asset->url,
+        portrait{
+          asset->{
+            url
+          },
+          alt
+        },
         bio,
         CV
     }
@@ -30,8 +35,8 @@ const about = await sanity.fetch(groq`
         {/* Portrettbilde  */}
         <div>
           <img
-            src={about.portraitUrl}
-            alt="Artist portrait"
+            src={about.portrait.asset.url}
+            alt={about.portrait?.alt || "Portrait of Hanna Karlsen"}
             class="w-full aspect-4/5 object-cover"
           />
         </div>

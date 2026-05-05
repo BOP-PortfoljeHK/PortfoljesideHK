@@ -24,6 +24,13 @@ export default defineType({
       description: "The portrait image for the about page.",
       type: "image",
       options: { hotspot: true },
+      fields: [
+        {
+          name: "alt",
+          title: "Alt-tekst",
+          type: "string",
+        }
+      ]
     }),
 
     defineField({
