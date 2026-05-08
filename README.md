@@ -73,7 +73,11 @@ The project focused on delivering a **user-friendly and maintainable solution**:
 
 ## Screenshots
 
--- Coming 
+<img width="1916" height="952" alt="image" src="https://github.com/user-attachments/assets/9fc50bfd-c2ad-4aeb-9069-61febf461257" />
+<img width="1904" height="953" alt="image" src="https://github.com/user-attachments/assets/24c3f9e8-fb27-43f1-9459-724353325e61" />
+<img width="1909" height="955" alt="image" src="https://github.com/user-attachments/assets/671e4dc4-1e64-4143-8225-40302467339e" />
+<img width="1903" height="949" alt="image" src="https://github.com/user-attachments/assets/36e5f663-e495-4c89-a90b-75b74252e493" />
+
 
 ## Website
 [Hanna Karlsen Portfolio](https://hannakarlsen.netlify.app/)
