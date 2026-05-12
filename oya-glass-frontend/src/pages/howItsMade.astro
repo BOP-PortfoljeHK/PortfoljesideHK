@@ -74,7 +74,9 @@ function getYoutubeId(url: string | null | undefined) {
       {howItsMadeVideo?.videos?.map((item: any, sectionIndex: number) => {
         const videoId = getYoutubeId(item.youtubeUrl);
         const hasVideo = Boolean(videoId);
-        const hasImages = Boolean(item.images?.length);
+
+        const images = item.images?.filter((img: any) => img.asset?.url) ?? [];
+        const hasImages = images.length > 0;
 
         return (
           <section class="border-t border-gray-300 pt-12">
@@ -112,7 +114,7 @@ function getYoutubeId(url: string | null | undefined) {
 
                   {/* Dersom det kun er bilder */}
                 {hasImages &&
-                  (item.images.length === 1 ? (
+                  (images.length === 1 ? (
                     <div class="max-w-4xl">
                       <button
                         type="button"
@@ -120,15 +122,15 @@ function getYoutubeId(url: string | null | undefined) {
                         data-lightbox-image
                         data-section={sectionIndex}
                         data-index={0}
-                        data-src={item.images[0].asset.url}
-                        data-alt={item.images[0].alt || item.title || ""}
-                        data-title={item.images[0].title || ""}
-                        data-description={item.images[0].description || ""}
+                        data-src={item.images[0]?.asset?.url}
+                        data-alt={item.images[0]?.alt || item.title || ""}
+                        data-title={item.images[0]?.title || ""}
+                        data-description={item.images[0]?.description || ""}
                       >
                         <div class="overflow-hidden rounded-md bg-white">
                           <img
-                            src={item.images[0].asset.url}
-                            alt={item.images[0].alt || item.title || ""}
+                            src={item.images[0]?.asset?.url}
+                            alt={item.images[0]?.alt || item.title || ""}
                             class="w-full max-h-[70vh] object-contain transition duration-500 hover:scale-105"
                           />
                         </div>
