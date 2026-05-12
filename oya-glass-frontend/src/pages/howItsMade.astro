@@ -25,11 +25,29 @@ const howItsMadeVideo = await sanity.fetch(groq`
   }
 `);
 
+{/* Hjelpefunksjon for å hente YouTube-ID fra URL */}
 function getYoutubeId(url: string | null | undefined) {
-  const regExp =
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/;
-  const match = url?.match(regExp);
-  return match ? match[1] : null;
+  if (!url) return null;
+
+  try {
+    const parsed = new URL(url);
+
+    if (parsed.hostname.includes("youtu.be")) {
+      return parsed.pathname.slice(1);
+    }
+
+    if (parsed.pathname.includes("/shorts/")) {
+      return parsed.pathname.split("/shorts/")[1];
+    }
+
+    if (parsed.pathname.includes("/embed/")) {
+      return parsed.pathname.split("/embed/")[1];
+    }
+
+    return parsed.searchParams.get("v");
+  } catch {
+    return null;
+  }
 }
 ---
 
