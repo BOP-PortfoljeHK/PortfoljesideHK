@@ -76,4 +76,4 @@ The project focused on delivering a **user-friendly and maintainable solution**:
 -- Coming 
 
 ## Website
-[Hanna Karlsen Portfoliowebsite](https://hannakarlsen.netlify.app/)
+[Hanna Karlsen Portfolio](https://hannakarlsen.netlify.app/)
