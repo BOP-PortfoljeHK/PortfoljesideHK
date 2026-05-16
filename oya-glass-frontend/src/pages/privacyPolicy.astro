@@ -15,8 +15,6 @@ const privacyPolicy = await sanity.fetch(groq`
 
 {/* Viser tittel for siden og enkel beskrivelse */}
 <Layout>
-  <body class="bg-slate-950 text-neutral-800">
-
     <section class="mx-auto max-w-3xl px-6 py-16">
 
       <h1 class="mb-8 text-4xl font-semibold">
@@ -26,6 +24,4 @@ const privacyPolicy = await sanity.fetch(groq`
       <PortableText value={privacyPolicy?.content} />
       
     </section>
-
-  </body>
 </Layout>

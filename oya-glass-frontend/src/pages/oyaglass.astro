@@ -37,11 +37,11 @@ const oyaglass = await sanity.fetch(groq`
     )}
     </div>
 
-  <section class="mx-auto max-w-7xl px-4 py-28">
+  <section class="mx-auto max-w-7xl px-4 py-28 md:px-10">
     <h1 class="mb-10 text-3xl leading-[1.1] text-center tracking-wide text-neutral-950 sm:text-4xl md:text-5xl">{oyaglass?.title}</h1>
     
     {/* Viser biografi eller beskrivelse av studioet, hentet fra Sanity */}
-    <div class="mx-auto max-w-3xl text-center mt-2 mb-16">
+    <div class="mx-auto max-w-4xl text-center mt-2 mb-16">
       <div class="text-lg leading-relaxed">
         <PortableText value={oyaglass?.bio} />
       </div>
