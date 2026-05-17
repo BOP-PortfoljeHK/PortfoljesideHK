@@ -62,6 +62,7 @@ export default defineType({
         defineField({
           name: "socialLinks",
           title: "Sosiale lenker",
+          description: "Social media links for the contact person or organization.",
           type: "array",
           of: [
             {
@@ -93,32 +94,7 @@ export default defineType({
         }),
       ],
     }),
-
-    defineField({
-      name: "form",
-      title: "Kontaktskjema (valgfritt)",
-      description:
-        "Hvis dere har skjema i frontend, kan dere styre tekst/labels her.",
-      type: "object",
-      fields: [
-        defineField({ 
-          name: "enabled", 
-          title: "Aktivert", 
-          type: "boolean" 
-        }),
-        defineField({ 
-          name: "submitLabel", 
-          title: "Knappetekst", 
-          type: "string" 
-        }),
-        defineField({
-          name: "successMessage",
-          title: "Suksessmelding",
-          type: "string",
-        }),
-      ],
-    }),
-  ],  
+  ],
 
   preview: {
     prepare() {
